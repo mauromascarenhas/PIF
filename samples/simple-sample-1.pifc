@@ -1,0 +1,14 @@
+programa Teste
+	var1, var2 : numérico
+	var1 = 3
+	var2 = var1 + 9
+	
+	se var2 >= var1 então
+		var1 = 0
+	fim-se
+	
+	enquanto var2 == var1 então
+		var@ = 1 + var@
+	fim-enquanto
+
+fim-programa
