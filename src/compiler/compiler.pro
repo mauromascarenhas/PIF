@@ -16,6 +16,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
+        sintacticanalyser/blockparser/blockparser.cpp \
+        sintacticanalyser/controlparser/controlparser.cpp \
+        sintacticanalyser/expresionparser/expressionparser.cpp \
+        sintacticanalyser/ioparser/ioparser.cpp \
         sintacticanalyser/lexicalanalyser/lexicalanalyser.cpp \
         sintacticanalyser/lexicalanalyser/token.cpp \
         sintacticanalyser/sintacticanalyser.cpp
@@ -26,6 +30,10 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
+    sintacticanalyser/blockparser/blockparser.h \
+    sintacticanalyser/controlparser/controlparser.h \
+    sintacticanalyser/expresionparser/expressionparser.h \
+    sintacticanalyser/ioparser/ioparser.h \
     sintacticanalyser/lexicalanalyser/lexicalanalyser.h \
     sintacticanalyser/lexicalanalyser/token.h \
     sintacticanalyser/sintacticanalyser.h
