@@ -16,12 +16,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
+        pifcompiler.cpp \
         sintacticanalyser/blockparser/blockparser.cpp \
         sintacticanalyser/controlparser/controlparser.cpp \
         sintacticanalyser/expresionparser/expressionparser.cpp \
         sintacticanalyser/ioparser/ioparser.cpp \
         sintacticanalyser/lexicalanalyser/lexicalanalyser.cpp \
         sintacticanalyser/lexicalanalyser/token.cpp \
+        sintacticanalyser/mainprogramparser/mainprogramparser.cpp \
+        sintacticanalyser/programitem.cpp \
         sintacticanalyser/sintacticanalyser.cpp
 
 # Default rules for deployment.
@@ -30,10 +33,13 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
+    pifcompiler.h \
     sintacticanalyser/blockparser/blockparser.h \
     sintacticanalyser/controlparser/controlparser.h \
     sintacticanalyser/expresionparser/expressionparser.h \
     sintacticanalyser/ioparser/ioparser.h \
     sintacticanalyser/lexicalanalyser/lexicalanalyser.h \
     sintacticanalyser/lexicalanalyser/token.h \
+    sintacticanalyser/mainprogramparser/mainprogramparser.h \
+    sintacticanalyser/programitem.h \
     sintacticanalyser/sintacticanalyser.h

@@ -1,8 +1,9 @@
 #ifndef CONTROLPARSER_H
 #define CONTROLPARSER_H
 
+#include "../programitem.h"
 
-class ControlParser
+class ControlParser : public ProgramItem
 {
 public:
     ControlParser();

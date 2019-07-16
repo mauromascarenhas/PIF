@@ -1,7 +1,7 @@
 #include "lexicalanalyser.h"
 
 LexicalAnalyser::LexicalAnalyser(const QString &line) :
-    LANGUAGE_TEMPLATE("((\\b\\d+(?:\\.\\d+)?)|((numérico|literal|programa|senão|se|então|fim-se|enquanto|fim-enquanto|fim-programa|leia|escreva)\\b)|(\\t))|([:,])|([a-zA-ZÇ-ÜÀ-ÁãÃÊ-ÏÌÓ-Ýá-ñ][\\wÇ-ÜÀ-ÁãÃÊ-ÏÌÓ-Ýá-ó]*)|((\\<\\=|\\>\\=|\\<|\\>|\\!\\=|\\=\\=|\\!)|(e|ou)\\b)|([\\+\\-\\*\\/\\=])|([^\\s\\1])")
+    LANGUAGE_TEMPLATE("((\\b\\d+(?:\\.\\d+)?)|((numérico|literal|booleano|programa|senão|se|então|fim-se|enquanto|fim-enquanto|fim-programa|leia|escreva)\\b)|(\\t| {4}))|([:,])|([a-zA-ZÇ-ÜÀ-ÁãÃÊ-ÏÌÓ-Ýá-ñ][\\wÇ-ÜÀ-ÁãÃÊ-ÏÌÓ-Ýá-ó]*)|((\\<\\=|\\>\\=|\\<|\\>|\\!\\=|\\=\\=|\\!)|(e|ou)\\b)|([\\+\\-\\*\\/\\=])|([^\\s\\1])")
 {
     this->count = 0;
     this->line = line;

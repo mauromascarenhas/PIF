@@ -1,8 +1,9 @@
 #ifndef IOPARSER_H
 #define IOPARSER_H
 
+#include "../programitem.h"
 
-class IOParser
+class IOParser : public ProgramItem
 {
 public:
     IOParser();
