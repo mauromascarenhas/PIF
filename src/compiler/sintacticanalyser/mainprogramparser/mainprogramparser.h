@@ -13,7 +13,15 @@ public:
     MainProgramParser(const QString &programName = "");
     ~MainProgramParser();
 
+    inline void closeProgramBlock() { this->closedProgramBlock = true; }
+    inline bool isProgramBlockClosed() { return this->closedProgramBlock; }
+
 private:
+    using BlockParser::getBlockExpression;
+    using BlockParser::setBlockExpression;
+
+    bool closedProgramBlock;
+
     const QString PROGRAM_NAME;
 };
 

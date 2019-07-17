@@ -6,6 +6,7 @@ class ProgramItem
 {
 public:
     ProgramItem();
+    virtual ~ProgramItem();
 };
 
 #endif // PROGRAMITEM_H

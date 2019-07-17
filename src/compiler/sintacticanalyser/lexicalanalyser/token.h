@@ -9,6 +9,7 @@ public:
     enum TokenType{
         ARITHIMETIC_OP,
         BOOLEAN_OP,
+        BOOLEAN_VAL,
         CONTROL,
         IDENTIFIER,
         INVALID,

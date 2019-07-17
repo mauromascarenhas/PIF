@@ -4,3 +4,7 @@ ProgramItem::ProgramItem()
 {
 
 }
+
+ProgramItem::~ProgramItem(){
+
+}
