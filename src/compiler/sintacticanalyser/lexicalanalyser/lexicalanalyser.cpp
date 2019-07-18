@@ -3,6 +3,8 @@
 LexicalAnalyser::LexicalAnalyser(const QString &line) :
     LANGUAGE_TEMPLATE("((\\b\\d+(?:\\.\\d+)?)|((numérico|literal|booleano|programa|senão|se|então|fim-se|faça|enquanto|fim-enquanto|fim-programa|leia|escreva)\\b)|(\\t| {4}))|([:,])|([a-zA-ZÇ-ÜÀ-ÁãÃÊ-ÏÌÓ-Ýá-ñ][\\wÇ-ÜÀ-ÁãÃÊ-ÏÌÓ-Ýá-ó]*)|((\\<\\=|\\>\\=|\\<|\\>|\\!\\=|\\=\\=|\\!)|(e|ou)\\b)|((verdadeiro|falso)\\b)|([\\+\\-\\*\\/\\=])|([^\\s\\1])")
 {
+    //TODO: Implement comment support!
+    //TODO: Implement support to literals
     this->count = 0;
     this->line = line;
     getMatches();

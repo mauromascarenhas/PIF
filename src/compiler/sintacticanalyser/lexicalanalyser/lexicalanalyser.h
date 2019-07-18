@@ -16,6 +16,7 @@ public:
 
     Token nextToken();
     inline int tokenCount() { return this->count; }
+    inline bool hasNextToken() { return this->tokens.size(); }
 
 private:
     const QRegularExpression LANGUAGE_TEMPLATE;

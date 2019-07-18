@@ -24,18 +24,86 @@ int SintacticAnalyser::execute(){
         QTextStream stream(&sourceFile);
         stream.setCodec("UTF-8"); //ISO 8859-1
 
-        while(!stream.atEnd()){
+        while(!stream.atEnd() && !programStarted){
             lineCounter++;
             QString line = stream.readLine();
             qInfo() << "Line : " << line;
             LexicalAnalyser lLine(line);
             qInfo() << "Token count : " << lLine.tokenCount() << "\n";
 
-            bool hasCommand;
             int tabulation, i;
             Token currentToken;
+            bool hasCommand = false;
 
-            //Removes tabulation
+            //Removes tabulation (but counts it)
+            for (i = tabulation = 0; i < lLine.tokenCount() && !hasCommand; ++i){
+                currentToken = lLine.nextToken();
+                if (currentToken.type() == Token::TABULATION) ++tabulation;
+                else hasCommand = true;
+            }
+
+            if (hasCommand){
+                switch (currentToken.type()) {
+                    case Token::RESERVED:
+                        if (currentToken.word() == "programa"){
+                            if (tabulation != indentFactor) qWarning() << "Erro no fator de tabulação!";
+
+                            if(i < lLine.tokenCount()){
+                                currentToken = lLine.nextToken();
+                                i++;
+
+                                if (currentToken.type() == Token::IDENTIFIER){
+                                    programStarted = true;
+                                    currentBlock = mainProgram = new MainProgramParser();
+                                    while(i < lLine.tokenCount()){
+                                        currentToken = lLine.nextToken();
+                                        if (currentToken.type() != Token::TABULATION){
+                                            qCritical() << "Token inválido!";
+                                            //TODO: Return what?
+                                            return 0;
+                                        }
+                                        i++;
+                                    }
+                                }
+                                else {
+                                    qCritical() << "Token inesperado.";
+                                    //TODO: Return what?
+                                    return 0;
+                                }
+                            }
+                            else currentBlock = mainProgram = new MainProgramParser();
+                            indentFactor++;
+                            break;
+                        }
+                    default:
+                        qCritical() << "Token inesperado antes do início do programa!";
+                        //TODO: Return what?
+                        return 0;
+                }
+            }
+
+            qDebug() << "Indent factor : " << indentFactor;
+        }
+
+        if (stream.atEnd() && !programStarted){
+            qCritical() << "Não há bloco de programa principal no arquivo fornecido como entrada.";
+            //TODO: Return what?
+            return 0;
+        }
+
+        while(!stream.atEnd() && !programFinished){
+            lineCounter++;
+            QString line = stream.readLine();
+            qInfo() << "Line : " << line;
+            LexicalAnalyser lLine(line);
+            qInfo() << "Token count : " << lLine.tokenCount() << "\n";
+
+            //TODO: define this block as a method?
+            int tabulation, i;
+            Token currentToken;
+            bool hasCommand = false;
+
+            //Removes tabulation (but counts it)
             for (i = tabulation = 0; i < lLine.tokenCount() && !hasCommand; ++i){
                 currentToken = lLine.nextToken();
                 if (currentToken.type() == Token::TABULATION) ++tabulation;
@@ -46,16 +114,6 @@ int SintacticAnalyser::execute(){
                 Token oldToken;
                 switch (currentToken.type()) {
                     case Token::IDENTIFIER:
-                        if (!programStarted) {
-                            qCritical() << "Token inesperado antes do início do programa!";
-                            //TODO: Return what?
-                            return 0;
-                        } else if (programFinished){
-                            qCritical() << "Token inesperado após o término do programa!";
-                            //TODO: Return what?
-                            return 0;
-                        }
-
                         if (tabulation != indentFactor) qWarning() << "Erro no fator de tabulação!";
 
                         oldToken = currentToken;
@@ -99,95 +157,71 @@ int SintacticAnalyser::execute(){
                         break;
 
                     case Token::RESERVED:
-                        if (!programStarted){
-                            if (currentToken.word() == "programa"){
-                                if (tabulation != indentFactor) qWarning() << "Erro no fator de tabulação!";
+                        if (currentToken.word().startsWith("fim-")){
+                            if (tabulation != indentFactor - 1) qWarning() << "Erro no fator de tabulação!";
 
-                                if(i < lLine.tokenCount()){
-                                    currentToken = lLine.nextToken();
-                                    if (currentToken.type() == Token::IDENTIFIER){
-                                        currentBlock = mainProgram = new MainProgramParser();
-                                        while(i < lLine.tokenCount()){
-                                            currentToken = lLine.nextToken();
-                                            if (currentToken.type() != Token::TABULATION){
-                                                qCritical() << "Token inválido!";
-                                                //TODO: Return what?
-                                                return 0;
-                                            }
-                                            i++;
-                                        }
-                                    }
-                                    else {
-                                        qCritical() << "Token inesperado.";
-                                        //TODO: Return what?
-                                        return 0;
-                                    }
-                                }
-                                else currentBlock = mainProgram = new MainProgramParser();
-                                indentFactor++;
-                            }
-                            else {
-                                qCritical() << "Token inesperado antes do início do programa!";
-                                //TODO: Return what?
-                                return 0;
-                            }
-                        }
-                        else {
-                            if (currentToken.word().startsWith("fim-")){
-                                if (tabulation != indentFactor - 1) qWarning() << "Erro no fator de tabulação!";
-
-                                QString fimBloco;
-                                switch (currentBlock->blockType()) {
-                                    case BlockParser::IF:
-                                    case BlockParser::ELSE_IF:
-                                    case BlockParser::ELSE:
-                                        fimBloco = "fim-se";
-                                        break;
-                                    case BlockParser::WHILE:
-                                        fimBloco = "fim-enquanto";
-                                        break;
-                                    case BlockParser::MAIN:
-                                        fimBloco = "fim-programa";
-                                        programFinished = true;
-                                        break;
-                                    default:
-                                        qCritical() << "Token inesperado.";
-                                        //TODO: Return what?
-                                        return 0;
-                                }
-                                if (currentToken.word() == fimBloco){
-                                    currentBlock->setSelfClosed(true);
-                                    currentBlock = currentBlock->parent();
-                                    indentFactor--;
-
-                                    while(i < lLine.tokenCount()){
-                                        currentToken = lLine.nextToken();
-                                        if (currentToken.type() != Token::TABULATION){
-                                            qCritical() << "Token inválido!";
-                                            //TODO: Return what?
-                                            return 0;
-                                        }
-                                        i++;
-                                    }
-                                }
-                                else {
+                            QString blockEnd;
+                            switch (currentBlock->blockType()) {
+                                case BlockParser::IF:
+                                case BlockParser::ELSE_IF:
+                                case BlockParser::ELSE:
+                                    blockEnd = "fim-se";
+                                    break;
+                                case BlockParser::WHILE:
+                                    blockEnd = "fim-enquanto";
+                                    break;
+                                case BlockParser::MAIN:
+                                    blockEnd = "fim-programa";
+                                    programFinished = true;
+                                    break;
+                                default:
                                     qCritical() << "Token inesperado.";
                                     //TODO: Return what?
                                     return 0;
-                                }
-                                break;
                             }
-                            else if (currentToken.word() == "enquanto"){
-                                if (currentBlock->blockType() == BlockParser::DO_WHILE){
-                                    if (tabulation != indentFactor - 1) qWarning() << "Erro no fator de tabulação!";
-                                    //TODO: Fecha bloco
+                            if (currentToken.word() == blockEnd){
+                                currentBlock->setSelfClosed(true);
+                                currentBlock = currentBlock->parent();
+                                indentFactor--;
+
+                                while(i < lLine.tokenCount()){
+                                    currentToken = lLine.nextToken();
+                                    if (currentToken.type() != Token::TABULATION){
+                                        qCritical() << "Token inválido!";
+                                        //TODO: Return what?
+                                        return 0;
+                                    }
+                                    i++;
+                                }
+                            }
+                            else {
+                                qCritical() << "Token inesperado.";
+                                //TODO: Return what?
+                                return 0;
+                            }
+                            break;
+                        }
+                        else if (currentToken.word() == "enquanto"){
+                            if (currentBlock->blockType() == BlockParser::DO_WHILE){
+                                if (tabulation != indentFactor - 1) qWarning() << "Erro no fator de tabulação!";
+
+                                if (i < lLine.tokenCount()){
+                                    ExpressionParser expression;
+                                    while(i < lLine.tokenCount()){
+                                        expression.addToken(lLine.nextToken());
+                                        i++;
+                                    }
+                                    currentBlock->setBlockExpression(expression);
+                                    currentBlock = currentBlock->parent();
+                                    indentFactor--;
                                 }
                                 else {
-                                    if (tabulation != indentFactor) qWarning() << "Erro no fator de tabulação!";
-                                    //TODO: Aninha bloco
+                                    qCritical() << "Esperado identificador ou expressão.";
+                                    //TODO: Return what?
+                                    return 0;
                                 }
                             }
-                            else if (currentToken.word() == "se"){
+                            else {
                                 if (tabulation != indentFactor) qWarning() << "Erro no fator de tabulação!";
 
                                 ExpressionParser expression;
@@ -195,64 +229,88 @@ int SintacticAnalyser::execute(){
                                     expression.addToken(lLine.nextToken());
                                     i++;
                                 }
-
-                                //TODO: Check expression validity
-                                BlockParser blockParser(currentBlock, BlockParser::IF, expression);
-                                currentBlock->addProgramItem(blockParser);
-                                currentBlock = &blockParser;
+                                BlockParser block(currentBlock, BlockParser::WHILE, expression);
+                                currentBlock->addProgramItem(block);
+                                currentBlock = &block;
                                 indentFactor++;
                             }
-                            else if (currentToken.word() == "senão"){
-                                if (tabulation != indentFactor - 1) qWarning() << "Erro no fator de tabulação!";
+                        }
+                        else if (currentToken.word() == "se"){
+                            if (tabulation != indentFactor) qWarning() << "Erro no fator de tabulação!";
 
-                                if (currentBlock->blockType() != BlockParser::IF &&
-                                        currentBlock->blockType() != BlockParser::ELSE_IF){
-                                    qCritical() << "Esperado estrutura condicional!";
-                                    //TODO: Return what?
-                                    return 0;
-                                }
+                            ExpressionParser expression;
+                            while(i < lLine.tokenCount()){
+                                expression.addToken(lLine.nextToken());
+                                i++;
+                            }
 
-                                if (i < lLine.tokenCount()){
-                                    Token oldToken = currentToken;
-                                    currentToken = lLine.nextToken();
-                                    ++i;
+                            //TODO: Check expression validity
+                            BlockParser block(currentBlock, BlockParser::IF, expression);
+                            currentBlock->addProgramItem(block);
+                            currentBlock = &block;
+                            indentFactor++;
+                        }
+                        else if (currentToken.word() == "senão"){
+                            if (tabulation != indentFactor - 1) qWarning() << "Erro no fator de tabulação!";
 
-                                    if (currentToken.word() == "se"){
-                                        ExpressionParser expressao;
-                                        while(i < lLine.tokenCount()){
-                                            expressao.addToken(lLine.nextToken());
-                                            ++i;
-                                        }
-                                        currentBlock = currentBlock->parent();
-                                        BlockParser block(currentBlock, BlockParser::ELSE_IF, expressao);
-                                        currentBlock = &block;
-                                    }
-                                    else {
-                                        qCritical() << "Esperado estrutura \"se\"!";
-                                        //TODO: Return what?
-                                        return 0;
-                                    }
-                                }
-                                else {
-                                    currentBlock = currentBlock->parent();
-                                    BlockParser block(currentBlock, BlockParser::ELSE);
-                                    block.setSelfClosed(true);
-                                    currentBlock = &block;
-                                }
-                            }
-                            else if (currentToken.word() == "leia"){
-                                if (tabulation != indentFactor) qWarning() << "Erro no fator de tabulação!";
-                                //TODO: Implementar
-                            }
-                            else if (currentToken.word() == "escreva"){
-                                if (tabulation != indentFactor) qWarning() << "Erro no fator de tabulação!";
-                                //TODO: Implementar
-                            }
-                            else{
-                                qCritical() << "Token inesperado.";
+                            if (currentBlock->blockType() != BlockParser::IF &&
+                                    currentBlock->blockType() != BlockParser::ELSE_IF){
+                                qCritical() << "Esperado estrutura condicional!";
                                 //TODO: Return what?
                                 return 0;
                             }
+
+                            if (i < lLine.tokenCount()){
+                                Token oldToken = currentToken;
+                                currentToken = lLine.nextToken();
+                                ++i;
+
+                                if (currentToken.word() == "se"){
+                                    ExpressionParser expressao;
+                                    while(i < lLine.tokenCount()){
+                                        expressao.addToken(lLine.nextToken());
+                                        ++i;
+                                    }
+                                    currentBlock = currentBlock->parent();
+                                    BlockParser block(currentBlock, BlockParser::ELSE_IF, expressao);
+                                    currentBlock->addProgramItem(block);
+                                    currentBlock = &block;
+                                }
+                                else {
+                                    qCritical() << "Esperado estrutura \"se\"!";
+                                    //TODO: Return what?
+                                    return 0;
+                                }
+                            }
+                            else {
+                                currentBlock = currentBlock->parent();
+                                BlockParser block(currentBlock, BlockParser::ELSE);
+                                block.setSelfClosed(true);
+                                currentBlock = &block;
+                            }
+                        }
+                        else if (currentToken.word() == "leia"){
+                            if (tabulation != indentFactor) qWarning() << "Erro no fator de tabulação!";
+                            IOParser inExpression(IOParser::INPUT);
+                            while(i < lLine.tokenCount()){
+                                inExpression.addToken(lLine.nextToken());
+                                i++;
+                            }
+                            currentBlock->addProgramItem(inExpression);
+                        }
+                        else if (currentToken.word() == "escreva"){
+                            if (tabulation != indentFactor) qWarning() << "Erro no fator de tabulação!";
+                            IOParser inExpression(IOParser::INPUT);
+                            while(i < lLine.tokenCount()){
+                                inExpression.addToken(lLine.nextToken());
+                                i++;
+                            }
+                            currentBlock->addProgramItem(inExpression);
+                        }
+                        else{
+                            qCritical() << "Token inesperado.";
+                            //TODO: Return what?
+                            return 0;
                         }
                         break;
 
@@ -262,10 +320,28 @@ int SintacticAnalyser::execute(){
                         return 0;
                 }
             }
+            qDebug() << "Indent factor : " << indentFactor;
+        }
+
+        while(!stream.atEnd()){
+            lineCounter++;
+            QString line = stream.readLine();
+            qInfo() << "Line : " << line;
+            LexicalAnalyser lLine(line);
+            qInfo() << "Token count : " << lLine.tokenCount() << "\n";
+
+            //Detects invalid tokens
+            while(lLine.hasNextToken()){
+                if (lLine.nextToken().type() != Token::TABULATION){
+                    qCritical() << "Token após o término do programa.";
+                    //TODO: Return what?
+                    return 0;
+                }
+            }
         }
         sourceFile.close();
 
-        //TODO: Convert file?
+        //TODO: Convert file
 
         return 0;
     }
