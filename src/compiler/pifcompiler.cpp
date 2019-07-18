@@ -19,9 +19,10 @@ void PIFCompiler::execute(){
         SintacticAnalyser sintacticAnalyser(arguments[1]);
         QCoreApplication::exit(sintacticAnalyser.execute());
     }
+    else {
+        //TODO: Return error?
+        qCritical() << "Nenhum arquivo especificado.";
 
-    //TODO: Return error?
-    qCritical() << "Nenhum arquivo especificado.";
-
-    QCoreApplication::exit(0);
+        QCoreApplication::exit(0);
+    }
 }

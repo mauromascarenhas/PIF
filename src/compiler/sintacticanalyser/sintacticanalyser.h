@@ -9,6 +9,7 @@
 #include "programitem.h"
 #include "lexicalanalyser/token.h"
 #include "blockparser/blockparser.h"
+#include "controlparser/controlparser.h"
 #include "lexicalanalyser/lexicalanalyser.h"
 #include "mainprogramparser/mainprogramparser.h"
 
@@ -32,6 +33,7 @@ private:
     int lineCounter;
     int indentFactor;
 
+    bool programStarted;
     bool programFinished;
 
     const QString IN_FILE, OUT_FILE;

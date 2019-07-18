@@ -5,3 +5,12 @@ ControlParser::ControlParser()
 {
 
 }
+
+ControlParser::~ControlParser(){
+
+}
+
+bool ControlParser::isValid(){
+    //TODO: Implement method
+    return true;
+}
