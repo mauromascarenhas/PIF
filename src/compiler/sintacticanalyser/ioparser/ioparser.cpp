@@ -1,7 +1,11 @@
 #include "ioparser.h"
 
-IOParser::IOParser()
+IOParser::IOParser(IOType type)
     : ProgramItem()
 {
+    this->ioType = type;
+}
+
+IOParser::~IOParser(){
 
 }
