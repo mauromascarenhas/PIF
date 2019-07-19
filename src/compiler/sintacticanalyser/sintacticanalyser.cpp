@@ -134,7 +134,7 @@ int SintacticAnalyser::execute(){
                                 currentBlock->addProgramItem(controlParser);
                                 break;
                             }
-                            case Token::ARITHIMETIC_OP:
+                            case Token::ARITHMETIC_OP:
                             case Token::BOOLEAN_OP:
                             {
                                 ExpressionParser expressionParser;

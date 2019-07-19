@@ -2,8 +2,10 @@
 #define BLOCKPARSER_H
 
 #include <QList>
+#include <QHash>
 
 #include "../programitem.h"
+#include "../controlparser/controlparser.h"
 #include "../expresionparser/expressionparser.h"
 
 class BlockParser: public ProgramItem
@@ -21,7 +23,8 @@ public:
 
     BlockParser(BlockParser *parent = nullptr,
                 BlockType blocktype = UNDEFINED,
-                const ExpressionParser &expression = ExpressionParser());
+                const ExpressionParser &expression = ExpressionParser(),
+                const QHash<QString, ControlParser::IdentifierType> &globalVars = QHash<QString, ControlParser::IdentifierType>());
     ~BlockParser();
 
     inline BlockParser * parent() { return this->parentBlock; }
@@ -46,6 +49,7 @@ protected:
 
     QList<ProgramItem> programItems;
     ExpressionParser blockExpression;
+    QHash<QString, ControlParser::IdentifierType> declaredVars;
 };
 
 #endif // BLOCKPARSER_H

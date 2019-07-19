@@ -4,6 +4,7 @@
 #include <QFile>
 #include <QDebug>
 #include <QString>
+#include <QHash>
 #include <QTextStream>
 
 #include "programitem.h"
@@ -39,6 +40,8 @@ private:
 
     const QString IN_FILE, OUT_FILE;
     const OperationType OPERATION;
+
+    QHash<QString, ControlParser::IdentifierType> availableVars;
 
     BlockParser *currentBlock;
     MainProgramParser *mainProgram;

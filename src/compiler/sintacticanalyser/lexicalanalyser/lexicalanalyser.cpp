@@ -5,6 +5,7 @@ LexicalAnalyser::LexicalAnalyser(const QString &line) :
 {
     //TODO: Implement comment support!
     //TODO: Implement support to literals
+    //TODO: Separate '=' operator into a different group -> Assignment
     this->count = 0;
     this->line = line;
     getMatches();
@@ -34,7 +35,7 @@ void LexicalAnalyser::getMatches(){
         else if (!match.captured(6).isEmpty()) tokens.append(Token(match.captured(6), Token::CONTROL, match.capturedStart(6)));
         else if (!match.captured(8).isEmpty()) tokens.append(Token(match.captured(8), Token::BOOLEAN_OP, match.capturedStart(8)));
         else if (!match.captured(9).isEmpty()) tokens.append(Token(match.captured(9), Token::BOOLEAN_VAL, match.capturedStart(9)));
-        else if (!match.captured(13).isEmpty()) tokens.append(Token(match.captured(13), Token::ARITHIMETIC_OP, match.capturedStart(13)));
+        else if (!match.captured(13).isEmpty()) tokens.append(Token(match.captured(13), Token::ARITHMETIC_OP, match.capturedStart(13)));
         else if (!match.captured(14).isEmpty()) tokens.append(Token(match.captured(14), Token::INVALID, match.capturedStart(14)));
         else tokens.append(Token(match.captured(0), Token::UNDEFINED, match.capturedStart(0)));
     }

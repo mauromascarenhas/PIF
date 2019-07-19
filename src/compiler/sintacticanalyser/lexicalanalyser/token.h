@@ -7,7 +7,7 @@ class Token
 {
 public:
     enum TokenType{
-        ARITHIMETIC_OP,
+        ARITHMETIC_OP,
         BOOLEAN_OP,
         BOOLEAN_VAL,
         CONTROL,
