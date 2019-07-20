@@ -12,24 +12,21 @@ ExpressionParser::~ExpressionParser(){
 }
 
 ExpressionParser::Validity ExpressionParser::validity(){
-    if (!tokens.size()) return INCOMPLETE;
+    if (!tokens.size()) return VALID_NO_ATTRIB;
 
     bool hasFinished = false;
-    bool canReturnValid = true;
+    bool canAttribute = true;
     bool invalidSemantic = false;
     Token current = tokens.first();
     Token oldToken = current;
 
     switch (oldToken.type()) {
+        case Token::LITERAL:
         case Token::NUMERIC:
-            cOperationType = ControlParser::NUMERIC;
-            canReturnValid = false;
-            break;
         case Token::BOOLEAN_VAL:
             cOperationType = ControlParser::BOOLEAN;
-            canReturnValid = false;
+            canAttribute = false;
             break;
-        //TODO: Insert literal
         case Token::IDENTIFIER:
             if (declaredVars.contains(oldToken.word())){
                 cOperationType = declaredVars.value(oldToken.word());
@@ -39,36 +36,35 @@ ExpressionParser::Validity ExpressionParser::validity(){
             return INVALID;
     }
 
-    if (tokens.length() == 1) return INCOMPLETE;
-    current = tokens[1];
-    oldToken = current;
+    if (tokens.length() == 1){
+        if (oldToken.type() == Token::IDENTIFIER
+                && cOperationType == ControlParser::BOOLEAN)
+            return VALID_NO_ATTRIB;
+        else return INVALID;
+    }
 
-    switch (oldToken.type()) {
-        case Token::ARITHMETIC_OP:
-            if (oldToken.word() != "="){
-                canReturnValid = false;
-                //TODO: Simplify operation (add semantic error message?)
-                if (cOperationType != ControlParser::NUMERIC
-                        || !(cOperationType == ControlParser::LITERAL
-                             && oldToken.word() == "+")) return INVALID;
-            }
-            break;
+    current = tokens[1];    
+    switch (current.type()) {
         case Token::BOOLEAN_OP:
-            canReturnValid = false;
+            canAttribute = false;
             cOperationType = ControlParser::BOOLEAN;
             break;
+        case Token::ASSIGNMENT:
+            if (oldToken.type() == Token::IDENTIFIER) break;
         default:
             return INVALID;
     }
+    oldToken = current;
 
     if (cOperationType == ControlParser::BOOLEAN){
         for (int i = 2; i < tokens.length(); ++i){
             current = tokens[i];
 
             if (hasFinished){
-                //TODO: Show that it cannot have tokens after tabs?
                 if (current.type() == Token::TABULATION) continue;
-                else return INVALID;
+                MessageLogger::getInstance().log(MessageLogger::ERROR,
+                    "Não pode haver qualquer token após uma tabulação, pois, ela é tratada como término de expressão.");
+                return INVALID;
             }
 
             switch (current.type()) {
@@ -79,24 +75,29 @@ ExpressionParser::Validity ExpressionParser::validity(){
                     else return INVALID;
                     break;
                 case Token::IDENTIFIER:
-                    if (oldToken.type() == Token::BOOLEAN_OP){
+                    if (oldToken.type() == Token::BOOLEAN_OP
+                            || oldToken.type() == Token::ASSIGNMENT){
                         if (declaredVars.contains(current.word())){
                             oldToken = current;
                             break;
                         }
                         else {
-                            //TODO: Display error (undeclared identifier)
+                            MessageLogger::getInstance().log(MessageLogger::E_UNDECLARED_ID,
+                                                             "", 0, current);
                             return INVALID;
                         }
                     }
                     else {
-                        //TODO: Display unexpected token
+                        MessageLogger::getInstance().log(MessageLogger::E_UNEXPECTED_T_EXP,
+                                                         "", 0, current);
                         return INVALID;
                     }
                 case Token::BOOLEAN_VAL:
-                    if (oldToken.type() == Token::BOOLEAN_OP) oldToken = current;
+                    if (oldToken.type() == Token::BOOLEAN_OP
+                            || oldToken.type() == Token::ASSIGNMENT) oldToken = current;
                     else {
-                        //TODO: Display unexpected token
+                        MessageLogger::getInstance().log(MessageLogger::E_UNEXPECTED_T_EXP,
+                                                         "", 0, current);
                         return INVALID;
                     }
                     break;
@@ -104,7 +105,8 @@ ExpressionParser::Validity ExpressionParser::validity(){
                     hasFinished = true;
                     break;
                 default:
-                    //TODO: Display unexpected token
+                    MessageLogger::getInstance().log(MessageLogger::E_UNEXPECTED_T_EXP,
+                                                     "", 0, current);
                     return INVALID;
             }
         }
@@ -114,9 +116,10 @@ ExpressionParser::Validity ExpressionParser::validity(){
             current = tokens[i];
 
             if (hasFinished){
-                //TODO: Show that it cannot have tokens after tabs?
                 if (current.type() == Token::TABULATION) continue;
-                else return INVALID;
+                MessageLogger::getInstance().log(MessageLogger::ERROR,
+                    "Não pode haver qualquer token após uma tabulação, pois, ela é tratada como término de expressão.");
+                return INVALID;
             }
 
             switch (current.type()) {
@@ -128,28 +131,34 @@ ExpressionParser::Validity ExpressionParser::validity(){
                     else return INVALID;
                     break;
                 case Token::IDENTIFIER:
-                    if (oldToken.type() == Token::ARITHMETIC_OP){
+                    if (oldToken.type() == Token::ARITHMETIC_OP
+                            || oldToken.type() == Token::ASSIGNMENT){
                         if (declaredVars.contains(current.word())){
                             if (ControlParser::NUMERIC != declaredVars.value(current.word())){
-                                //TODO: Add semantic error message?
+                                MessageLogger::getInstance().log(MessageLogger::INFO,
+                                                                 "Identificador de tipo não numérico em operação aritmética (poderá causar erro de execução).");
                                 invalidSemantic = true;
                             }
                             oldToken = current;
                             break;
                         }
                         else {
-                            //TODO: Display error (undeclared identifier)
+                            MessageLogger::getInstance().log(MessageLogger::E_UNDECLARED_ID,
+                                                             "", 0, current);
                             return INVALID;
                         }
                     }
                     else {
-                        //TODO: Display unexpected token
+                        MessageLogger::getInstance().log(MessageLogger::E_UNEXPECTED_T_EXP,
+                                                         "", 0, current);
                         return INVALID;
                     }
                 case Token::NUMERIC:
-                    if (oldToken.type() == Token::ARITHMETIC_OP) oldToken = current;
+                    if (oldToken.type() == Token::ARITHMETIC_OP
+                            || oldToken.type() == Token::ASSIGNMENT) oldToken = current;
                     else {
-                        //TODO: Display unexpected token
+                        MessageLogger::getInstance().log(MessageLogger::E_UNEXPECTED_T_EXP,
+                                                         "", 0, current);
                         return INVALID;
                     }
                     break;
@@ -157,7 +166,8 @@ ExpressionParser::Validity ExpressionParser::validity(){
                     hasFinished = true;
                     break;
                 default:
-                    //TODO: Display unexpected token
+                    MessageLogger::getInstance().log(MessageLogger::E_UNEXPECTED_T_EXP,
+                                                     "", 0, current);
                     return INVALID;
             }
         }
@@ -167,25 +177,27 @@ ExpressionParser::Validity ExpressionParser::validity(){
             current = tokens[i];
 
             if (hasFinished){
-                //TODO: Show that it cannot have tokens after tabs?
                 if (current.type() == Token::TABULATION) continue;
-                else return INVALID;
+                MessageLogger::getInstance().log(MessageLogger::ERROR,
+                    "Não pode haver qualquer token após uma tabulação, pois, ela é tratada como término de expressão.");
+                return INVALID;
             }
 
             switch (current.type()) {
                 case Token::ARITHMETIC_OP:
                     if (current.word() != "+") {
-                        //TODO: Add error message?
+                        MessageLogger::getInstance().log(MessageLogger::E_UNEXPECTED_T_EXP,
+                                                         "Apenas operação de concatenação é permitida em literais",
+                                                         0, current);
                         return INVALID;
                     }
-                    if (oldToken.type() == Token::IDENTIFIER
-                            || oldToken.type() == Token::LITERAL)
-                        oldToken = current;
-                    else return INVALID;
+                    oldToken = current;
                     break;
                 case Token::IDENTIFIER:
-                    if (oldToken.type() == Token::ARITHMETIC_OP){
+                    if (oldToken.type() == Token::ARITHMETIC_OP
+                            || oldToken.type() == Token::ASSIGNMENT){
                         if (declaredVars.contains(current.word())){
+                            //TODO: Is this really necessary?
                             if (ControlParser::LITERAL != declaredVars.value(current.word())){
                                 //TODO: Add semantic error message?
                                 invalidSemantic = true;
@@ -194,18 +206,22 @@ ExpressionParser::Validity ExpressionParser::validity(){
                             break;
                         }
                         else {
-                            //TODO: Display error (undeclared identifier)
+                            MessageLogger::getInstance().log(MessageLogger::E_UNDECLARED_ID,
+                                                             "", 0, current);
                             return INVALID;
                         }
                     }
                     else {
-                        //TODO: Display unexpected token
+                        MessageLogger::getInstance().log(MessageLogger::E_UNEXPECTED_T_EXP,
+                                                         "", 0, current);
                         return INVALID;
                     }
                 case Token::NUMERIC:
-                    if (oldToken.type() == Token::ARITHMETIC_OP) oldToken = current;
+                    if (oldToken.type() == Token::ARITHMETIC_OP
+                            || oldToken.type() == Token::ASSIGNMENT) oldToken = current;
                     else {
-                        //TODO: Display unexpected token
+                        MessageLogger::getInstance().log(MessageLogger::E_UNEXPECTED_T_EXP,
+                                                         "", 0, current);
                         return INVALID;
                     }
                     break;
@@ -213,7 +229,8 @@ ExpressionParser::Validity ExpressionParser::validity(){
                     hasFinished = true;
                     break;
                 default:
-                    //TODO: Display unexpected token
+                    MessageLogger::getInstance().log(MessageLogger::E_UNEXPECTED_T_EXP,
+                                                     "", 0, current);
                     return INVALID;
             }
         }
@@ -226,7 +243,7 @@ ExpressionParser::Validity ExpressionParser::validity(){
         case Token::BOOLEAN_VAL:
         case Token::LITERAL:
         case Token::NUMERIC:
-            return canReturnValid ? VALID: INCOMPLETE;
+            return canAttribute ? VALID_ATTRIB: VALID_NO_ATTRIB;
         default:
             return INVALID;
     }

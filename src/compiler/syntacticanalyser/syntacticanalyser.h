@@ -2,9 +2,8 @@
 #define SINTACTICANALYSER_H
 
 #include <QFile>
-#include <QDebug>
-#include <QString>
 #include <QHash>
+#include <QString>
 #include <QTextStream>
 
 #include "programitem.h"
@@ -12,6 +11,7 @@
 #include "lexicalanalyser/token.h"
 #include "blockparser/blockparser.h"
 #include "controlparser/controlparser.h"
+#include "messagelogger/messagelogger.h"
 #include "lexicalanalyser/lexicalanalyser.h"
 #include "mainprogramparser/mainprogramparser.h"
 
@@ -34,8 +34,8 @@ public:
     void freeReferences(BlockParser *block);
 
 private:
-    int lineCounter;
     int indentFactor;
+    unsigned int lineCounter;
 
     bool programStarted;
     bool programFinished;

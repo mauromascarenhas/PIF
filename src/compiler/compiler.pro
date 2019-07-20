@@ -16,6 +16,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
+        messagelogger/messagelogger.cpp \
         pifcompiler.cpp \
         syntacticanalyser/blockparser/blockparser.cpp \
         syntacticanalyser/controlparser/controlparser.cpp \
@@ -33,6 +34,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
+    messagelogger/messagelogger.h \
     pifcompiler.h \
     syntacticanalyser/blockparser/blockparser.h \
     syntacticanalyser/controlparser/controlparser.h \

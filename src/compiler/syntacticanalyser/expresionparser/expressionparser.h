@@ -4,6 +4,7 @@
 #include <QList>
 
 #include "../programitem.h"
+#include "messagelogger/messagelogger.h"
 #include "syntacticanalyser/lexicalanalyser/token.h"
 #include "syntacticanalyser/controlparser/controlparser.h"
 
@@ -13,8 +14,8 @@ public:
     enum Validity{
         INVALID,
         INVALID_SEM,
-        INCOMPLETE,
-        VALID
+        VALID_NO_ATTRIB,
+        VALID_ATTRIB
     };
 
     ExpressionParser(const QHash<QString, ControlParser::IdentifierType> &globalVars = QHash<QString, ControlParser::IdentifierType>());

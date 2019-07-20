@@ -2,14 +2,13 @@
 #define PIFCOMPILER_H
 
 #include <QFile>
-#include <QDebug>
 #include <QObject>
 #include <QString>
-#include <QTextStream>
+#include <QStringList>
 #include <QCoreApplication>
 
+#include "messagelogger/messagelogger.h"
 #include "syntacticanalyser/syntacticanalyser.h"
-#include "syntacticanalyser/lexicalanalyser/lexicalanalyser.h"
 
 class PIFCompiler : public QObject
 {
