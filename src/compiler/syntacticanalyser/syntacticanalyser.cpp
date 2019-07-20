@@ -228,10 +228,28 @@ int SyntacticAnalyser::execute(){
                                 if (tabulation != indentFactor) qWarning() << "Erro no fator de tabulação!";
 
                                 ExpressionParser *expression = new ExpressionParser(availableVars);
-                                while(i < lLine.tokenCount()){
-                                    expression->addToken(lLine.nextToken());
+
+                                bool hasNFinished = true;
+                                while(i < lLine.tokenCount() && hasNFinished){
+                                    Token tCurrent = lLine.nextToken();
+                                    if (tCurrent.word() == "faça") hasNFinished = false;
+                                    else expression->addToken(tCurrent);
                                     i++;
                                 }
+                                if (hasNFinished){
+                                    qCritical() << "Esperado término de expressão.";
+                                    //TODO: Return what?
+                                    return 0;
+                                }
+
+                                while (i < lLine.tokenCount()){
+                                    if (lLine.nextToken().type() != Token::TABULATION){
+                                        qCritical() << "Token inesperado após término de expressão.";
+                                        //TODO: Return what?
+                                        return 0;
+                                    }
+                                }
+
                                 qDebug() << expression->validity();
                                 BlockParser *block = new BlockParser(currentBlock, BlockParser::WHILE, expression);
                                 currentBlock->addProgramItem(block);
@@ -243,9 +261,26 @@ int SyntacticAnalyser::execute(){
                             if (tabulation != indentFactor) qWarning() << "Erro no fator de tabulação!";
 
                             ExpressionParser *expression = new ExpressionParser(availableVars);
-                            while(i < lLine.tokenCount()){
-                                expression->addToken(lLine.nextToken());
+
+                            bool hasNFinished = true;
+                            while(i < lLine.tokenCount() && hasNFinished){
+                                Token tCurrent = lLine.nextToken();
+                                if (tCurrent.word() == "então") hasNFinished = false;
+                                else expression->addToken(tCurrent);
                                 i++;
+                            }
+                            if (hasNFinished){
+                                qCritical() << "Esperado término de expressão.";
+                                //TODO: Return what?
+                                return 0;
+                            }
+
+                            while (i < lLine.tokenCount()){
+                                if (lLine.nextToken().type() != Token::TABULATION){
+                                    qCritical() << "Token inesperado após término de expressão.";
+                                    //TODO: Return what?
+                                    return 0;
+                                }
                             }
 
                             //TODO: Check expression validity
@@ -272,10 +307,28 @@ int SyntacticAnalyser::execute(){
 
                                 if (currentToken.word() == "se"){
                                     ExpressionParser *expression = new ExpressionParser(availableVars);
-                                    while(i < lLine.tokenCount()){
-                                        expression->addToken(lLine.nextToken());
-                                        ++i;
+
+                                    bool hasNFinished = true;
+                                    while(i < lLine.tokenCount() && hasNFinished){
+                                        Token tCurrent = lLine.nextToken();
+                                        if (tCurrent.word() == "faça") hasNFinished = false;
+                                        else expression->addToken(tCurrent);
+                                        i++;
                                     }
+                                    if (hasNFinished){
+                                        qCritical() << "Esperado término de expressão.";
+                                        //TODO: Return what?
+                                        return 0;
+                                    }
+
+                                    while (i < lLine.tokenCount()){
+                                        if (lLine.nextToken().type() != Token::TABULATION){
+                                            qCritical() << "Token inesperado após término de expressão.";
+                                            //TODO: Return what?
+                                            return 0;
+                                        }
+                                    }
+
                                     currentBlock = currentBlock->parent();
                                     qDebug() << expression->validity();
                                     BlockParser *block = new BlockParser(currentBlock, BlockParser::ELSE_IF, expression);

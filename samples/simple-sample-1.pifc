@@ -7,7 +7,7 @@ programa Teste
 		var1 = 0
 	fim-se
 	
-	enquanto var2 == var1 então
+	enquanto var2 == var1 faça
 		var@ = 1 + var@
 	fim-enquanto
 
