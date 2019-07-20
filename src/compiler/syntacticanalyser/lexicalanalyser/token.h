@@ -8,12 +8,16 @@ class Token
 public:
     enum TokenType{
         ARITHMETIC_OP,
+        ASSIGNMENT,
         BOOLEAN_OP,
         BOOLEAN_VAL,
         CONTROL,
         IDENTIFIER,
         INVALID,
+        LITERAL,
         NUMERIC,
+        PRIORITY_O,
+        PRIORITY_C,
         RESERVED,
         TABULATION,
         UNDEFINED

@@ -8,8 +8,8 @@
 #include <QTextStream>
 #include <QCoreApplication>
 
-#include "sintacticanalyser/sintacticanalyser.h"
-#include "sintacticanalyser/lexicalanalyser/lexicalanalyser.h"
+#include "syntacticanalyser/syntacticanalyser.h"
+#include "syntacticanalyser/lexicalanalyser/lexicalanalyser.h"
 
 class PIFCompiler : public QObject
 {
@@ -29,7 +29,7 @@ private:
     QString fileName;
     QString outFileName;
     QStringList arguments;
-    SintacticAnalyser::OperationType operation;
+    SyntacticAnalyser::OperationType operation;
 };
 
 #endif // PIFCOMPILER_H

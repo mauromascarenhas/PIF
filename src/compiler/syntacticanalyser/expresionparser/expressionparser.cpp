@@ -11,7 +11,13 @@ ExpressionParser::~ExpressionParser(){
 
 }
 
+#include <QDebug>
+
 ExpressionParser::Validity ExpressionParser::validity(){
+    for (int i = 0; i < tokens.size(); ++i){
+        qDebug() << tokens[i].word();
+    }
+
     if (!tokens.size()) return INCOMPLETE;
 
     bool hasFinished = false;
@@ -19,6 +25,7 @@ ExpressionParser::Validity ExpressionParser::validity(){
     bool invalidSemantic = false;
     Token current = tokens.first();
     Token oldToken = current;
+
     switch (oldToken.type()) {
         case Token::NUMERIC:
             cOperationType = ControlParser::NUMERIC;
@@ -180,8 +187,8 @@ ExpressionParser::Validity ExpressionParser::validity(){
                         //TODO: Add error message?
                         return INVALID;
                     }
-                    //TODO: Add literal type
-                    if (oldToken.type() == Token::IDENTIFIER)
+                    if (oldToken.type() == Token::IDENTIFIER
+                            || oldToken.type() == Token::LITERAL)
                         oldToken = current;
                     else return INVALID;
                     break;
@@ -226,7 +233,7 @@ ExpressionParser::Validity ExpressionParser::validity(){
     switch (current.type()) {
         case Token::IDENTIFIER:
         case Token::BOOLEAN_VAL:
-        //TODO: Add literal
+        case Token::LITERAL:
         case Token::NUMERIC:
             return canReturnValid ? VALID: INCOMPLETE;
         default:

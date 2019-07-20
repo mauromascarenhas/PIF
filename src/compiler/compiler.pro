@@ -17,15 +17,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         pifcompiler.cpp \
-        sintacticanalyser/blockparser/blockparser.cpp \
-        sintacticanalyser/controlparser/controlparser.cpp \
-        sintacticanalyser/expresionparser/expressionparser.cpp \
-        sintacticanalyser/ioparser/ioparser.cpp \
-        sintacticanalyser/lexicalanalyser/lexicalanalyser.cpp \
-        sintacticanalyser/lexicalanalyser/token.cpp \
-        sintacticanalyser/mainprogramparser/mainprogramparser.cpp \
-        sintacticanalyser/programitem.cpp \
-        sintacticanalyser/sintacticanalyser.cpp
+        syntacticanalyser/blockparser/blockparser.cpp \
+        syntacticanalyser/controlparser/controlparser.cpp \
+        syntacticanalyser/expresionparser/expressionparser.cpp \
+        syntacticanalyser/ioparser/ioparser.cpp \
+        syntacticanalyser/lexicalanalyser/lexicalanalyser.cpp \
+        syntacticanalyser/lexicalanalyser/token.cpp \
+        syntacticanalyser/mainprogramparser/mainprogramparser.cpp \
+        syntacticanalyser/programitem.cpp \
+        syntacticanalyser/syntacticanalyser.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -34,12 +34,12 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     pifcompiler.h \
-    sintacticanalyser/blockparser/blockparser.h \
-    sintacticanalyser/controlparser/controlparser.h \
-    sintacticanalyser/expresionparser/expressionparser.h \
-    sintacticanalyser/ioparser/ioparser.h \
-    sintacticanalyser/lexicalanalyser/lexicalanalyser.h \
-    sintacticanalyser/lexicalanalyser/token.h \
-    sintacticanalyser/mainprogramparser/mainprogramparser.h \
-    sintacticanalyser/programitem.h \
-    sintacticanalyser/sintacticanalyser.h
+    syntacticanalyser/blockparser/blockparser.h \
+    syntacticanalyser/controlparser/controlparser.h \
+    syntacticanalyser/expresionparser/expressionparser.h \
+    syntacticanalyser/ioparser/ioparser.h \
+    syntacticanalyser/lexicalanalyser/lexicalanalyser.h \
+    syntacticanalyser/lexicalanalyser/token.h \
+    syntacticanalyser/mainprogramparser/mainprogramparser.h \
+    syntacticanalyser/programitem.h \
+    syntacticanalyser/syntacticanalyser.h

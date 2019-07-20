@@ -23,19 +23,20 @@ public:
 
     BlockParser(BlockParser *parent = nullptr,
                 BlockType blocktype = UNDEFINED,
-                const ExpressionParser &expression = ExpressionParser(),
+                ExpressionParser *expression = nullptr,
                 const QHash<QString, ControlParser::IdentifierType> &globalVars = QHash<QString, ControlParser::IdentifierType>());
     ~BlockParser();
 
     inline BlockParser * parent() { return this->parentBlock; }
 
-    inline ExpressionParser getBlockExpression() { return this->blockExpression; }
-    inline void setBlockExpression(const ExpressionParser &expression) { this->blockExpression = expression; }
+    inline ExpressionParser * getBlockExpression() { return this->blockExpression; }
+    inline void setBlockExpression(ExpressionParser *expression) { this->blockExpression = expression; }
 
     inline bool isSelfClosed() { return this->selfClosed; }
     inline void setSelfClosed(bool selfClosed) { this->selfClosed = selfClosed; }
 
-    inline void addProgramItem(const ProgramItem &programItem) { this->programItems.append(programItem); }
+    inline void addProgramItem(ProgramItem *programItem) { this->programItemsC.append(programItem); }
+    inline QList<ProgramItem*> programItems() { return this->programItemsC; }
 
     inline BlockType blockType(){ return this->BLOCKTYPE; }
 
@@ -47,8 +48,8 @@ protected:
 
     const BlockType BLOCKTYPE;
 
-    QList<ProgramItem> programItems;
-    ExpressionParser blockExpression;
+    QList<ProgramItem*> programItemsC;
+    ExpressionParser* blockExpression;
     QHash<QString, ControlParser::IdentifierType> declaredVars;
 };
 

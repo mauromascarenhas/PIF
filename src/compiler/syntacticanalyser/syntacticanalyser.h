@@ -15,7 +15,7 @@
 #include "lexicalanalyser/lexicalanalyser.h"
 #include "mainprogramparser/mainprogramparser.h"
 
-class SintacticAnalyser
+class SyntacticAnalyser
 {
 public:
     enum OperationType{
@@ -24,12 +24,14 @@ public:
         CONVERT_JAVA
     };
 
-    explicit SintacticAnalyser(const QString &fileName = "",
+    explicit SyntacticAnalyser(const QString &fileName = "",
                                 const QString &outFileName = "",
                                 OperationType operation = CONVERT_C);
-    ~SintacticAnalyser();
+    ~SyntacticAnalyser();
 
     int execute();
+    void freeReferences();
+    void freeReferences(BlockParser *block);
 
 private:
     int lineCounter;

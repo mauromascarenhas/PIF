@@ -1,7 +1,7 @@
 #include "blockparser.h"
 
 BlockParser::BlockParser(BlockParser *parent, BlockType blocktype,
-    const ExpressionParser &expression, const QHash<QString, ControlParser::IdentifierType> &globalVars)
+    ExpressionParser *expression, const QHash<QString, ControlParser::IdentifierType> &globalVars)
     : ProgramItem(), BLOCKTYPE(blocktype)
 {
     selfClosed = true;

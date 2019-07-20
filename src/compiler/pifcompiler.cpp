@@ -16,7 +16,7 @@ void PIFCompiler::execute(){
     //TODO: Parse arguments
 
     if (argCount > 1){
-        SintacticAnalyser sintacticAnalyser(arguments[1]);
+        SyntacticAnalyser sintacticAnalyser(arguments[1]);
         QCoreApplication::exit(sintacticAnalyser.execute());
     }
     else {

@@ -1,6 +1,6 @@
-#include "sintacticanalyser.h"
+#include "syntacticanalyser.h"
 
-SintacticAnalyser::SintacticAnalyser(const QString &fileName,
+SyntacticAnalyser::SyntacticAnalyser(const QString &fileName,
     const QString &outFileName, OperationType operation) :
     IN_FILE(fileName), OUT_FILE(outFileName), OPERATION(operation)
 {
@@ -14,11 +14,11 @@ SintacticAnalyser::SintacticAnalyser(const QString &fileName,
     indentFactor = 0;
 }
 
-SintacticAnalyser::~SintacticAnalyser(){
-    if (mainProgram) delete mainProgram;
+SyntacticAnalyser::~SyntacticAnalyser(){
+    this->freeReferences();
 }
 
-int SintacticAnalyser::execute(){
+int SyntacticAnalyser::execute(){
     QFile sourceFile(IN_FILE);
     if (sourceFile.open(QIODevice::ReadOnly | QIODevice::Text)){
         QTextStream stream(&sourceFile);
@@ -123,28 +123,30 @@ int SintacticAnalyser::execute(){
                         switch (currentToken.type()) {
                             case Token::CONTROL:
                             {
-                                ControlParser controlParser;
-                                controlParser.addToken(oldToken);
-                                controlParser.addToken(currentToken);
+                                ControlParser *controlParser = new ControlParser();
+                                controlParser->addToken(oldToken);
+                                controlParser->addToken(currentToken);
                                 while(i < lLine.tokenCount()){
                                     currentToken = lLine.nextToken();
-                                    controlParser.addToken(currentToken);
+                                    controlParser->addToken(currentToken);
                                     i++;
                                 }
+                                qDebug() << controlParser->insertNewVars(availableVars);
                                 currentBlock->addProgramItem(controlParser);
                                 break;
                             }
                             case Token::ARITHMETIC_OP:
                             case Token::BOOLEAN_OP:
                             {
-                                ExpressionParser expressionParser;
-                                expressionParser.addToken(oldToken);
-                                expressionParser.addToken(currentToken);
+                                ExpressionParser *expressionParser = new ExpressionParser(availableVars);
+                                expressionParser->addToken(oldToken);
+                                expressionParser->addToken(currentToken);
                                 while(i < lLine.tokenCount()){
                                     currentToken = lLine.nextToken();
-                                    expressionParser.addToken(currentToken);
+                                    expressionParser->addToken(currentToken);
                                     i++;
                                 }
+                                qDebug() << expressionParser->validity();
                                 currentBlock->addProgramItem(expressionParser);
                                 break;
                             }
@@ -206,11 +208,12 @@ int SintacticAnalyser::execute(){
                                 if (tabulation != indentFactor - 1) qWarning() << "Erro no fator de tabulação!";
 
                                 if (i < lLine.tokenCount()){
-                                    ExpressionParser expression;
+                                    ExpressionParser *expression = new ExpressionParser(availableVars);
                                     while(i < lLine.tokenCount()){
-                                        expression.addToken(lLine.nextToken());
+                                        expression->addToken(lLine.nextToken());
                                         i++;
                                     }
+                                    qDebug() << expression->validity();
                                     currentBlock->setBlockExpression(expression);
                                     currentBlock = currentBlock->parent();
                                     indentFactor--;
@@ -224,30 +227,32 @@ int SintacticAnalyser::execute(){
                             else {
                                 if (tabulation != indentFactor) qWarning() << "Erro no fator de tabulação!";
 
-                                ExpressionParser expression;
+                                ExpressionParser *expression = new ExpressionParser(availableVars);
                                 while(i < lLine.tokenCount()){
-                                    expression.addToken(lLine.nextToken());
+                                    expression->addToken(lLine.nextToken());
                                     i++;
                                 }
-                                BlockParser block(currentBlock, BlockParser::WHILE, expression);
+                                qDebug() << expression->validity();
+                                BlockParser *block = new BlockParser(currentBlock, BlockParser::WHILE, expression);
                                 currentBlock->addProgramItem(block);
-                                currentBlock = &block;
+                                currentBlock = block;
                                 indentFactor++;
                             }
                         }
                         else if (currentToken.word() == "se"){
                             if (tabulation != indentFactor) qWarning() << "Erro no fator de tabulação!";
 
-                            ExpressionParser expression;
+                            ExpressionParser *expression = new ExpressionParser(availableVars);
                             while(i < lLine.tokenCount()){
-                                expression.addToken(lLine.nextToken());
+                                expression->addToken(lLine.nextToken());
                                 i++;
                             }
 
                             //TODO: Check expression validity
-                            BlockParser block(currentBlock, BlockParser::IF, expression);
+                            qDebug() << expression->validity();
+                            BlockParser *block = new BlockParser(currentBlock, BlockParser::IF, expression);
                             currentBlock->addProgramItem(block);
-                            currentBlock = &block;
+                            currentBlock = block;
                             indentFactor++;
                         }
                         else if (currentToken.word() == "senão"){
@@ -266,15 +271,16 @@ int SintacticAnalyser::execute(){
                                 ++i;
 
                                 if (currentToken.word() == "se"){
-                                    ExpressionParser expressao;
+                                    ExpressionParser *expression = new ExpressionParser(availableVars);
                                     while(i < lLine.tokenCount()){
-                                        expressao.addToken(lLine.nextToken());
+                                        expression->addToken(lLine.nextToken());
                                         ++i;
                                     }
                                     currentBlock = currentBlock->parent();
-                                    BlockParser block(currentBlock, BlockParser::ELSE_IF, expressao);
+                                    qDebug() << expression->validity();
+                                    BlockParser *block = new BlockParser(currentBlock, BlockParser::ELSE_IF, expression);
                                     currentBlock->addProgramItem(block);
-                                    currentBlock = &block;
+                                    currentBlock = block;
                                 }
                                 else {
                                     qCritical() << "Esperado estrutura \"se\"!";
@@ -291,18 +297,18 @@ int SintacticAnalyser::execute(){
                         }
                         else if (currentToken.word() == "leia"){
                             if (tabulation != indentFactor) qWarning() << "Erro no fator de tabulação!";
-                            IOParser inExpression(IOParser::INPUT);
+                            IOParser *inExpression = new IOParser(IOParser::INPUT);
                             while(i < lLine.tokenCount()){
-                                inExpression.addToken(lLine.nextToken());
+                                inExpression->addToken(lLine.nextToken());
                                 i++;
                             }
                             currentBlock->addProgramItem(inExpression);
                         }
                         else if (currentToken.word() == "escreva"){
                             if (tabulation != indentFactor) qWarning() << "Erro no fator de tabulação!";
-                            IOParser inExpression(IOParser::INPUT);
+                            IOParser *inExpression = new IOParser(IOParser::INPUT);
                             while(i < lLine.tokenCount()){
-                                inExpression.addToken(lLine.nextToken());
+                                inExpression->addToken(lLine.nextToken());
                                 i++;
                             }
                             currentBlock->addProgramItem(inExpression);
@@ -343,9 +349,28 @@ int SintacticAnalyser::execute(){
 
         //TODO: Convert file
 
+        freeReferences();
         return 0;
     }
 
     qCritical() << "Não foi possível abrir o código fonte. Você tem as permissões necessárias?";
     return 0; //TODO: Return what?
+}
+
+void SyntacticAnalyser::freeReferences(){
+    freeReferences(mainProgram);
+}
+
+void SyntacticAnalyser::freeReferences(BlockParser *block){
+    BlockParser *cBlock = block;
+    while(cBlock->programItems().size()){
+        ProgramItem *current = cBlock->programItems().first();
+        if (dynamic_cast<BlockParser*>(current))
+            this->freeReferences(static_cast<BlockParser*>(current));
+        else {
+            delete current;
+            cBlock->programItems().removeFirst();
+        }
+    }
+    delete block;
 }

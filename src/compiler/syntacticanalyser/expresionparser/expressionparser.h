@@ -4,8 +4,8 @@
 #include <QList>
 
 #include "../programitem.h"
-#include "sintacticanalyser/lexicalanalyser/token.h"
-#include "sintacticanalyser/controlparser/controlparser.h"
+#include "syntacticanalyser/lexicalanalyser/token.h"
+#include "syntacticanalyser/controlparser/controlparser.h"
 
 class ExpressionParser : public ProgramItem
 {

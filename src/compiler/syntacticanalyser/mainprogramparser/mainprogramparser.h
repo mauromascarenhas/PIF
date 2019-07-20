@@ -5,7 +5,7 @@
 #include <QString>
 
 #include "../blockparser/blockparser.h"
-#include "sintacticanalyser/programitem.h"
+#include "syntacticanalyser/programitem.h"
 
 class MainProgramParser : public BlockParser
 {

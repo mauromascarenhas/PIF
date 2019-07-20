@@ -6,7 +6,7 @@
 #include <QString>
 
 #include "../programitem.h"
-#include "sintacticanalyser/lexicalanalyser/token.h"
+#include "syntacticanalyser/lexicalanalyser/token.h"
 
 class ControlParser : public ProgramItem
 {

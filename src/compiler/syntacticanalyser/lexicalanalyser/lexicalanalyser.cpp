@@ -1,9 +1,8 @@
 #include "lexicalanalyser.h"
 
 LexicalAnalyser::LexicalAnalyser(const QString &line) :
-    LANGUAGE_TEMPLATE("((\\b\\d+(?:\\.\\d+)?)|((numérico|literal|booleano|programa|senão|se|então|fim-se|faça|enquanto|fim-enquanto|fim-programa|leia|escreva)\\b)|(\\t| {4}))|([:,])|([a-zA-ZÇ-ÜÀ-ÁãÃÊ-ÏÌÓ-Ýá-ñ][\\wÇ-ÜÀ-ÁãÃÊ-ÏÌÓ-Ýá-ó]*)|((\\<\\=|\\>\\=|\\<|\\>|\\!\\=|\\=\\=|\\!)|(e|ou)\\b)|((verdadeiro|falso)\\b)|([\\+\\-\\*\\/\\=])|([^\\s\\1])")
+    LANGUAGE_TEMPLATE("((\\b\\d+(?:\\.\\d+)?)|((numérico|literal|booleano|programa|senão|se|então|fim-se|faça|enquanto|fim-enquanto|fim-programa|leia|escreva)\\b)|(\\t| {4}))|([:,])|([a-zA-ZÇ-ÜÀ-ÁãÃÊ-ÏÌÓ-Ýá-ñ][\\wÇ-ÜÀ-ÁãÃÊ-ÏÌÓ-Ýá-ó]*)|((\\<\\=|\\>\\=|\\<|\\>|\\!\\=|\\=\\=|\\!)|(e|ou)\\b)|((verdadeiro|falso)\\b)|([\\+\\-\\*\\/\\=])|(\\\\)|([^\\s\\1])")
 {
-    //TODO: Implement comment support!
     //TODO: Implement support to literals
     //TODO: Separate '=' operator into a different group -> Assignment
     this->count = 0;
@@ -36,7 +35,8 @@ void LexicalAnalyser::getMatches(){
         else if (!match.captured(8).isEmpty()) tokens.append(Token(match.captured(8), Token::BOOLEAN_OP, match.capturedStart(8)));
         else if (!match.captured(9).isEmpty()) tokens.append(Token(match.captured(9), Token::BOOLEAN_VAL, match.capturedStart(9)));
         else if (!match.captured(13).isEmpty()) tokens.append(Token(match.captured(13), Token::ARITHMETIC_OP, match.capturedStart(13)));
-        else if (!match.captured(14).isEmpty()) tokens.append(Token(match.captured(14), Token::INVALID, match.capturedStart(14)));
+        else if (!match.captured(15).isEmpty()) tokens.append(Token(match.captured(15), Token::INVALID, match.capturedStart(15)));
+        else if (!match.captured(14).isEmpty()) break;
         else tokens.append(Token(match.captured(0), Token::UNDEFINED, match.capturedStart(0)));
     }
 
