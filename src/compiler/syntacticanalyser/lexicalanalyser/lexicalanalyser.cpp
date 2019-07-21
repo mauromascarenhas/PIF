@@ -7,9 +7,10 @@ LexicalAnalyser::LexicalAnalyser(const QString &line) :
                       "|([a-zA-ZÇ-ÜÀ-ÁãÃÊ-ÏÌÓ-Ýá-ñ][\\wÇ-ÜÀ-ÁãÃÊ-ÏÌÓ-Ýá-ó]*)"
                       "|((\\<\\=|\\>\\=|\\<|\\>|\\!\\=|\\=\\=|\\!)|(e|ou)\\b)"
                       "|((verdadeiro|falso)\\b)|([\\+\\-\\*\\/])|(\\=)"
+                      "|(\\()|(\\))"
+                      "|(\"(?:[^\"\\\\]++|\\\\.)*+\")"
                       "|(\\\\)|([^\\s\\1])")
 {
-    //TODO: Implement support to literals
     this->count = 0;
     this->line = line;
     getMatches();
@@ -41,8 +42,11 @@ void LexicalAnalyser::getMatches(){
         else if (!match.captured(9).isEmpty()) tokens.append(Token(match.captured(9), Token::BOOLEAN_VAL, match.capturedStart(9)));
         else if (!match.captured(13).isEmpty()) tokens.append(Token(match.captured(13), Token::ARITHMETIC_OP, match.capturedStart(13)));
         else if (!match.captured(14).isEmpty()) tokens.append(Token(match.captured(14), Token::ASSIGNMENT, match.capturedStart(14)));
-        else if (!match.captured(16).isEmpty()) tokens.append(Token(match.captured(16), Token::INVALID, match.capturedStart(16)));
-        else if (!match.captured(15).isEmpty()) break;
+        else if (!match.captured(15).isEmpty()) tokens.append(Token(match.captured(15), Token::PRIORITY_O, match.capturedStart(15)));
+        else if (!match.captured(16).isEmpty()) tokens.append(Token(match.captured(16), Token::PRIORITY_C, match.capturedStart(16)));
+        else if (!match.captured(17).isEmpty()) tokens.append(Token(match.captured(17), Token::LITERAL, match.capturedStart(17)));
+        else if (!match.captured(19).isEmpty()) tokens.append(Token(match.captured(19), Token::INVALID, match.capturedStart(19)));
+        else if (!match.captured(18).isEmpty()) break;
         else tokens.append(Token(match.captured(0), Token::UNDEFINED, match.capturedStart(0)));
     }
 

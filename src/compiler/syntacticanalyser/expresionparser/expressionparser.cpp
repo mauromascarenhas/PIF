@@ -14,6 +14,7 @@ ExpressionParser::~ExpressionParser(){
 ExpressionParser::Validity ExpressionParser::validity(){
     if (!tokens.size()) return VALID_NO_ATTRIB;
 
+    //WARNING: Missing support for operation precedence
     bool hasFinished = false;
     bool canAttribute = true;
     bool invalidSemantic = false;
@@ -197,13 +198,6 @@ ExpressionParser::Validity ExpressionParser::validity(){
                     if (oldToken.type() == Token::ARITHMETIC_OP
                             || oldToken.type() == Token::ASSIGNMENT){
                         if (declaredVars.contains(current.word())){
-                            //TODO: Is this really necessary?
-                            if (ControlParser::LITERAL != declaredVars.value(current.word())){
-                                MessageLogger::getInstance().log(MessageLogger::WARNING,
-                                                                 "Você está concatenando itens não literais em uma expressão literal. "
-                                                                 "Isto poderá acarretar em comportamentos indesejados na execução.");
-                                invalidSemantic = true;
-                            }
                             oldToken = current;
                             break;
                         }
@@ -245,7 +239,7 @@ ExpressionParser::Validity ExpressionParser::validity(){
         case Token::BOOLEAN_VAL:
         case Token::LITERAL:
         case Token::NUMERIC:
-            return canAttribute ? VALID_ATTRIB: VALID_NO_ATTRIB;
+            return canAttribute ? VALID_ATTRIB : VALID_NO_ATTRIB;
         default:
             return INVALID;
     }

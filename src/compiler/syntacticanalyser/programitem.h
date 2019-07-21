@@ -9,8 +9,13 @@ public:
     ProgramItem();
     virtual ~ProgramItem();
 
-    //TODO: Implement
-    //virtual QString toString(int indentFactor) = 0;
+    enum ConvLang{
+        C,
+        CPP,
+        JAVA
+    };
+    //TODO: Implement (should request open stream as well/instead?)
+    //virtual QString toString(int indentFactor, ConvLang conv = C) = 0;
 };
 
 #endif // PROGRAMITEM_H

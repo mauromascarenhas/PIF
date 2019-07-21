@@ -397,7 +397,18 @@ int SyntacticAnalyser::execute(){
         }
         sourceFile.close();
 
-        //TODO: Convert file
+        //TODO: Convert
+        switch (OPERATION) {
+            case CONVERT_CPP:
+                //Convert CPP
+                break;
+            case CONVERT_JAVA:
+                //Convert Java
+                break;
+            default:
+                //Convert C
+                break;
+        }
 
         return MessageLogger::getInstance().log(MessageLogger::SUCCESS);
     }
