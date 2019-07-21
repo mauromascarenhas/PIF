@@ -15,7 +15,7 @@ SyntacticAnalyser::SyntacticAnalyser(const QString &fileName,
 }
 
 SyntacticAnalyser::~SyntacticAnalyser(){
-    this->freeReferences();
+    if (mainProgram) delete mainProgram;
 }
 
 int SyntacticAnalyser::execute(){
@@ -111,7 +111,7 @@ int SyntacticAnalyser::execute(){
                 Token oldToken;
                 switch (currentToken.type()) {
                     case Token::IDENTIFIER:
-                        //TODO: Return if critical!
+                        //WARNING: Return if critical!
                         if (tabulation != indentFactor)
                             MessageLogger::getInstance().log(MessageLogger::W_INDENT_FACTOR,
                                 QString("Esperado %1, obtido %2").arg(indentFactor, tabulation),
@@ -350,6 +350,7 @@ int SyntacticAnalyser::execute(){
                                 inExpression->addToken(lLine.nextToken());
                                 i++;
                             }
+                            qDebug() << inExpression->isValid();
                             currentBlock->addProgramItem(inExpression);
                         }
                         else if (currentToken.word() == "escreva"){
@@ -358,12 +359,13 @@ int SyntacticAnalyser::execute(){
                                     QString("Esperado %1, obtido %2").arg(indentFactor, tabulation),
                                     lineCounter);
 
-                            IOParser *inExpression = new IOParser(IOParser::INPUT);
+                            IOParser *outExpression = new IOParser(IOParser::INPUT);
                             while(i < lLine.tokenCount()){
-                                inExpression->addToken(lLine.nextToken());
+                                outExpression->addToken(lLine.nextToken());
                                 i++;
                             }
-                            currentBlock->addProgramItem(inExpression);
+                            qDebug() << outExpression->isValid();
+                            currentBlock->addProgramItem(outExpression);
                         }
                         else return MessageLogger::getInstance().log(MessageLogger::E_UNEXPECTED_T,
                                         "", lineCounter, currentToken);
@@ -397,29 +399,8 @@ int SyntacticAnalyser::execute(){
 
         //TODO: Convert file
 
-        freeReferences();
         return MessageLogger::getInstance().log(MessageLogger::SUCCESS);
     }
 
     return MessageLogger::getInstance().log(MessageLogger::E_CANT_OPEN_FILE);
-}
-
-void SyntacticAnalyser::freeReferences(){
-    freeReferences(mainProgram);
-}
-
-void SyntacticAnalyser::freeReferences(BlockParser *block){
-    if (block == nullptr) return;
-
-    BlockParser *cBlock = block;
-    while(cBlock->programItems().size()){
-        ProgramItem *current = cBlock->programItems().first();
-        if (dynamic_cast<BlockParser*>(current))
-            this->freeReferences(static_cast<BlockParser*>(current));
-        else {
-            delete current;
-            cBlock->programItems().removeFirst();
-        }
-    }
-    delete block;
 }

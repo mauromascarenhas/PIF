@@ -17,6 +17,7 @@ public:
 
     enum LogType{
         E_CANT_OPEN_FILE,
+        E_INVALID_ARGS,
         E_INVALID_T,
         E_UNEXPECTED_T,
         E_UNEXPECTED_T_EXP,
@@ -26,9 +27,9 @@ public:
         E_NO_FILE,
         E_STRUCTURE_EXPECTED,
         E_UNDECLARED_ID,
-        E_UNKNOWN,
+        E_UNDEFINED,
         W_INDENT_FACTOR,
-        W_UNKNOWN,
+        W_UNDEFINED,
         SUCCESS
     };
 
@@ -39,6 +40,8 @@ public:
     };
 
     static MessageLogger& getInstance(CriticalMode mode = WARNING_L);
+    static void clearInstance();
+    ~MessageLogger();
 
     void log(MessageType type, const QString &message);
     int log(LogType type, const QString &appendMsg = "",
@@ -46,7 +49,6 @@ public:
 
 private:
     explicit MessageLogger(CriticalMode mode = WARNING_L);
-    ~MessageLogger();
 
     static MessageLogger *current;
 

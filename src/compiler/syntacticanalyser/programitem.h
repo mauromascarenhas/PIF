@@ -10,7 +10,7 @@ public:
     virtual ~ProgramItem();
 
     //TODO: Implement
-    //virtual QString toString() = 0;
+    //virtual QString toString(int indentFactor) = 0;
 };
 
 #endif // PROGRAMITEM_H

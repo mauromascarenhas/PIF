@@ -43,7 +43,7 @@ public:
     inline bool operator <= (const Token &other){ return this->cPos <= other.position(); }
     inline bool operator >= (const Token &other){ return this->cPos >= other.position(); }
 
-    void operator = (const Token &other);
+    Token& operator =(const Token &other);
 
 private:
     long int cPos;

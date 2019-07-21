@@ -199,7 +199,9 @@ ExpressionParser::Validity ExpressionParser::validity(){
                         if (declaredVars.contains(current.word())){
                             //TODO: Is this really necessary?
                             if (ControlParser::LITERAL != declaredVars.value(current.word())){
-                                //TODO: Add semantic error message?
+                                MessageLogger::getInstance().log(MessageLogger::WARNING,
+                                                                 "Você está concatenando itens não literais em uma expressão literal. "
+                                                                 "Isto poderá acarretar em comportamentos indesejados na execução.");
                                 invalidSemantic = true;
                             }
                             oldToken = current;

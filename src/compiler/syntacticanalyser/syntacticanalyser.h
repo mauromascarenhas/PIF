@@ -30,8 +30,6 @@ public:
     ~SyntacticAnalyser();
 
     int execute();
-    void freeReferences();
-    void freeReferences(BlockParser *block);
 
 private:
     int indentFactor;

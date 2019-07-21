@@ -67,12 +67,16 @@ bool ControlParser::insertNewVars(QHash<QString, IdentifierType> &globalVars){
         }
     }
 
+    bool hasDuplicate = false;
     for (int i = 0; i < declaredIDs.length(); ++i){
         if (globalVars.contains(declaredIDs[i])){
-            //TODO: Emit error in case of duplicates
+            MessageLogger::getInstance().log(MessageLogger::ERROR,
+                                             QString("O identificador %1 já foi previamente declarado.")
+                                                .arg(declaredIDs[i]));
+            hasDuplicate = true;
         }
         else globalVars.insert(declaredIDs[i], currentType);
     }
 
-    return true;
+    return !hasDuplicate;
 }

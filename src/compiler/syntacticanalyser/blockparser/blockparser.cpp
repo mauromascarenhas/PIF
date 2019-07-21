@@ -12,5 +12,8 @@ BlockParser::BlockParser(BlockParser *parent, BlockType blocktype,
 }
 
 BlockParser::~BlockParser(){
-
+    while (programItemsC.size()){
+        delete programItemsC.first();
+        programItemsC.removeFirst();
+    }
 }

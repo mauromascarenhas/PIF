@@ -16,8 +16,10 @@ Token::~Token(){
 
 }
 
-void Token::operator=(const Token &other){
+Token& Token::operator =(const Token &other){
     this->cPos = other.position();
     this->cType = other.type();
     this->cWord = other.word();
+
+    return *this;
 }
