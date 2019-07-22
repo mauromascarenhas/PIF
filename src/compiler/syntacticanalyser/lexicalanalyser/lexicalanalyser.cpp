@@ -11,6 +11,7 @@ LexicalAnalyser::LexicalAnalyser(const QString &line) :
                       "|(\"(?:[^\"\\\\]++|\\\\.)*+\")"
                       "|(\\\\)|([^\\s\\1])")
 {
+    //WARNING: Replace id chars if > 127 (ASCII)
     this->count = 0;
     this->line = line;
     getMatches();
