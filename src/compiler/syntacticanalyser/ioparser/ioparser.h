@@ -38,6 +38,8 @@ private:
     bool inValidity();
     bool outValidity();
 
+    QList<Token> validArgs();
+
     void toOutFileC(int indentFactor, QTextStream &stream);
     void toOutFileCPP(int indentFactor, QTextStream &stream);
     void toOutFileJAVA(int indentFactor, QTextStream &stream);

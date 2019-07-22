@@ -1,0 +1,3 @@
+programa OlaMundo
+	escreva "Ola mundo!"
+fim-programa

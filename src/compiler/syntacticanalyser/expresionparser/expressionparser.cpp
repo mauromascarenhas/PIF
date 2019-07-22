@@ -249,6 +249,8 @@ void ExpressionParser::toOutFile(int indentFactor, QTextStream &stream, ConvLang
     QString tabs = "";
     for (int i = 0; i < indentFactor; ++i) tabs += "\t";
 
+    //FIXME: Literal expressions must behave properly in each output language
+
     switch (this->validity()) {
         case VALID_ATTRIB:
             stream << tabs.toUtf8();

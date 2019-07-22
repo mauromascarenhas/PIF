@@ -47,6 +47,10 @@ int MessageLogger::log(LogType type, const QString &appendMsg,
                 logMessage = QString("[ ERRO ] Não foi possível abrir o código fonte. Você tem as permissões necessárias? %1").arg(appendMsg);
                 returnVal = 1;
                 break;
+            case E_CANT_OPEN_FILE_O:
+                logMessage = QString("[ ERRO ] Não foi escrever no arquivo de saída. Você tem as permissões necessárias? %1").arg(appendMsg);
+                returnVal = 3;
+                break;
             case E_INVALID_ARGS:
                 logMessage = QString("[ ERRO ] Argumentos de inicialização inválidos. %1").arg(appendMsg);
                 returnVal = 1;

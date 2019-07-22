@@ -346,7 +346,7 @@ int SyntacticAnalyser::execute(){
                                     QString("Esperado %1, obtido %2").arg(indentFactor, tabulation),
                                     lineCounter);
 
-                            IOParser *inExpression = new IOParser(IOParser::INPUT);
+                            IOParser *inExpression = new IOParser(IOParser::INPUT, availableVars);
                             while(i < lLine.tokenCount()){
                                 inExpression->addToken(lLine.nextToken());
                                 i++;
@@ -360,7 +360,7 @@ int SyntacticAnalyser::execute(){
                                     QString("Esperado %1, obtido %2").arg(indentFactor, tabulation),
                                     lineCounter);
 
-                            IOParser *outExpression = new IOParser(IOParser::INPUT);
+                            IOParser *outExpression = new IOParser(IOParser::OUTPUT, availableVars);
                             while(i < lLine.tokenCount()){
                                 outExpression->addToken(lLine.nextToken());
                                 i++;
@@ -463,7 +463,7 @@ int SyntacticAnalyser::execute(){
                     break;
             }
         }
-        //TODO: Add else statement
+        else return MessageLogger::getInstance().log(MessageLogger::E_CANT_OPEN_FILE);
 
         return MessageLogger::getInstance().log(MessageLogger::SUCCESS);
     }

@@ -1,0 +1,10 @@
+programa Soma
+	a, b, soma : numérico
+	
+	escreva "Digite dois numeros:"
+	
+	leia a, b
+	soma = a + b
+	
+	escreva "A soma deles eh : " + soma
+fim-programa

@@ -31,6 +31,7 @@ void MainProgramParser::toOutFileC(int indentFactor, QTextStream &stream){
 
     stream << QString("// Programa %1 gerado automaticamente por PIFC\n\n").arg(PROGRAM_NAME).toUtf8();
     stream << QString("%1#include <stdio.h>\n"
+                      "%1#include <string.h>\n"
                       "%1#include <stdlib.h>\n"
                       "\n"
                       "%1typedef unsigned char string[1024];\n"
@@ -53,7 +54,7 @@ void MainProgramParser::toOutFileCPP(int indentFactor, QTextStream &stream){
     indentFactor++;
 
     stream << QString("// Programa %1 gerado automaticamente por PIFC\n\n").arg(PROGRAM_NAME).toUtf8();
-    stream << QString("%1#include <string>"
+    stream << QString("%1#include <string>\n"
                       "%1#include <cstdlib>\n"
                       "%1#include <iostream>\n"
                       "\n"
@@ -62,7 +63,7 @@ void MainProgramParser::toOutFileCPP(int indentFactor, QTextStream &stream){
                       "%1int main(int argc, char *argv[]){\n").arg(tabs).toUtf8();
 
     for (int i = 0; i < programItemsC.size(); ++i)
-        programItemsC[i]->toOutFile(indentFactor, stream);
+        programItemsC[i]->toOutFile(indentFactor, stream, ProgramItem::CPP);
 
     stream << QString("%1\treturn EXIT_SUCCESS;\n"
                       "%1}\n").arg(tabs).toUtf8();
@@ -71,7 +72,20 @@ void MainProgramParser::toOutFileCPP(int indentFactor, QTextStream &stream){
 void MainProgramParser::toOutFileJAVA(int indentFactor, QTextStream &stream){
     QString tabs = "";
     for (int i = 0; i < indentFactor; ++i) tabs += "\t";
-    indentFactor++;
+    indentFactor+=2;
 
-    //TODO: Implement here!
+    stream << QString("// Programa %1 gerado automaticamente por PIFC\n\n").arg(PROGRAM_NAME).toUtf8();
+    stream << QString("%1import java.util.Scanner;\n"
+                      "\n"
+                      "%1public class %2 {\n"
+                      "\n"
+                      "%1\tpublic static void main(String[] args) {\n"
+                      "%1\t\tScanner scanner = new Scanner(System.in);"
+                      "\n").arg(tabs, PROGRAM_NAME).toUtf8();
+
+    for (int i = 0; i < programItemsC.size(); ++i)
+        programItemsC[i]->toOutFile(indentFactor, stream, ProgramItem::JAVA);
+
+    stream << QString("%1\t}\n\n"
+                      "%1}\n").arg(tabs).toUtf8();
 }
