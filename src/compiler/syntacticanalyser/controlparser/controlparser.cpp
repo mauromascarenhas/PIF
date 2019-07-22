@@ -80,3 +80,77 @@ bool ControlParser::insertNewVars(QHash<QString, IdentifierType> &globalVars){
 
     return !hasDuplicate;
 }
+
+void ControlParser::toOutFile(int indentFactor, QTextStream &stream, ConvLang conv){
+    switch (conv) {
+        case CPP:
+            toOutFileCPP(indentFactor, stream);
+            break;
+        case JAVA:
+            toOutFileJAVA(indentFactor, stream);
+            break;
+        default:
+            toOutFileC(indentFactor, stream);
+            break;
+    }
+}
+
+void ControlParser::toOutFileC(int indentFactor, QTextStream &stream){
+    QString tabs = "";
+    for (int i = 0; i < indentFactor; ++i) tabs += "\t";
+
+    switch (currentType) {
+        case NUMERIC:
+            stream << QString("%1double ").arg(tabs).toUtf8();
+            break;
+        case BOOLEAN:
+            stream << QString("%1bool ").arg(tabs).toUtf8();
+            break;
+        default:
+            stream << QString("%1string ").arg(tabs).toUtf8();
+            break;
+    }
+    for (int i = 0; i < declaredIDs.size(); ++i)
+        stream << QString("%1%2").arg(declaredIDs[i], i == declaredIDs.length() - 1 ? "" : ", ").toUtf8();
+    stream << QString(";\n").toUtf8();
+}
+
+void ControlParser::toOutFileCPP(int indentFactor, QTextStream &stream){
+    QString tabs = "";
+    for (int i = 0; i < indentFactor; ++i) tabs += "\t";
+
+    switch (currentType) {
+        case NUMERIC:
+            stream << QString("%1double ").arg(tabs).toUtf8();
+            break;
+        case BOOLEAN:
+            stream << QString("%1bool ").arg(tabs).toUtf8();
+            break;
+        default:
+            stream << QString("%1string ").arg(tabs).toUtf8();
+            break;
+    }
+    for (int i = 0; i < declaredIDs.size(); ++i)
+        stream << QString("%1%2").arg(declaredIDs[i], i == declaredIDs.length() - 1 ? "" : ", ").toUtf8();
+    stream << QString(";\n").toUtf8();
+}
+
+void ControlParser::toOutFileJAVA(int indentFactor, QTextStream &stream){
+    QString tabs = "";
+    for (int i = 0; i < indentFactor; ++i) tabs += "\t";
+
+    switch (currentType) {
+        case NUMERIC:
+            stream << QString("%1double ").arg(tabs).toUtf8();
+            break;
+        case BOOLEAN:
+            stream << QString("%1boolean ").arg(tabs).toUtf8();
+            break;
+        default:
+            stream << QString("%1String ").arg(tabs).toUtf8();
+            break;
+    }
+    for (int i = 0; i < declaredIDs.size(); ++i)
+        stream << QString("%1%2").arg(declaredIDs[i], i == declaredIDs.length() - 1 ? "" : ", ").toUtf8();
+    stream << QString(";\n").toUtf8();
+}

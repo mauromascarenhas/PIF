@@ -40,6 +40,8 @@ public:
 
     inline BlockType blockType(){ return this->BLOCKTYPE; }
 
+    void toOutFile(int indentFactor, QTextStream &stream, ConvLang conv = C);
+
 private:
     BlockParser *parentBlock;
 

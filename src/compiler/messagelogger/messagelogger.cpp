@@ -74,6 +74,14 @@ int MessageLogger::log(LogType type, const QString &appendMsg,
                 logMessage = QString("[ ERRO ] Nenhum arquivo especificado como entrada. %1").arg(appendMsg);
                 returnVal = 1;
                 break;
+            case E_OUT_EXISTS:
+                logMessage = QString("[ ERRO ] O arquivo fornecido como saída já existe. %1").arg(appendMsg);
+                returnVal = 3;
+                break;
+            case E_OUT_CANT_REMOVE:
+                logMessage = QString("[ ERRO ] Não foi possível sobrescrever o arquivo de saída %1.").arg(appendMsg);
+                returnVal = 3;
+                break;
             case E_STRUCTURE_EXPECTED:
                 logMessage = QString("[ ERRO ] Esperava-se a declaração de uma nova estrutura na linha %1. %2").arg(line).arg(appendMsg);
                 break;

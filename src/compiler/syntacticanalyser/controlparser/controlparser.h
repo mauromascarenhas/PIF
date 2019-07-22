@@ -28,10 +28,16 @@ public:
 
     inline QStringList getDeclaredIDs() { return this->declaredIDs; }
 
+    void toOutFile(int indentFactor, QTextStream &stream, ConvLang conv = C);
+
 private:
     QList<Token> tokens;
     QStringList declaredIDs;
     IdentifierType currentType;
+
+    void toOutFileC(int indentFactor, QTextStream &stream);
+    void toOutFileCPP(int indentFactor, QTextStream &stream);
+    void toOutFileJAVA(int indentFactor, QTextStream &stream);
 };
 
 #endif // CONTROLPARSER_H

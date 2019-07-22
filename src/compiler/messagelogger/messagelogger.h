@@ -25,6 +25,8 @@ public:
         E_NO_END_OF_EXPR,
         E_NO_MAIN_ROUTINE,
         E_NO_FILE,
+        E_OUT_EXISTS,
+        E_OUT_CANT_REMOVE,
         E_STRUCTURE_EXPECTED,
         E_UNDECLARED_ID,
         E_UNDEFINED,

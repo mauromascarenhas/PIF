@@ -16,6 +16,10 @@ public:
     inline void closeProgramBlock() { this->closedProgramBlock = true; }
     inline bool isProgramBlockClosed() { return this->closedProgramBlock; }
 
+    inline QString programName() { return this->PROGRAM_NAME; }
+
+    void toOutFile(int indentFactor, QTextStream &stream, ConvLang conv = C);
+
 private:
     using BlockParser::getBlockExpression;
     using BlockParser::setBlockExpression;
@@ -23,6 +27,10 @@ private:
     bool closedProgramBlock;
 
     const QString PROGRAM_NAME;
+
+    void toOutFileC(int indentFactor, QTextStream &stream);
+    void toOutFileCPP(int indentFactor, QTextStream &stream);
+    void toOutFileJAVA(int indentFactor, QTextStream &stream);
 };
 
 #endif // MAINPROGRAMPARSER_H

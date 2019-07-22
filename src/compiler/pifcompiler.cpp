@@ -14,6 +14,7 @@ void PIFCompiler::execute(){
     qInfo() << "\n-----------------------";
 
     bool hasValidArgs = true;
+    bool overwriteFile = false;
     MessageLogger::CriticalMode criticalMode = MessageLogger::WARNING_L;
     SyntacticAnalyser::OperationType operation = SyntacticAnalyser::CONVERT_C;
 
@@ -27,7 +28,8 @@ void PIFCompiler::execute(){
             continue;
         }
 
-        if (arguments[i].toLower() == "-c") criticalMode = MessageLogger::CRITICAL_Q;
+        if (arguments[i].toLower() == "-f") overwriteFile = true;
+        else if (arguments[i].toLower() == "-c") criticalMode = MessageLogger::CRITICAL_Q;
         else if(arguments[i].toLower() == "-l"){
             if (i < arguments.size() - 2){
                 if (arguments[++i] == "c") operation = SyntacticAnalyser::CONVERT_C;
@@ -55,11 +57,12 @@ void PIFCompiler::execute(){
         qInfo() << "* Out file : " << outFileName;
         qInfo() << "* Convert op : " << operation;
         qInfo() << "* Critical mode : " << criticalMode;
+        qInfo() << "* Overwrite : " << criticalMode;
         qInfo() << "-----------------------\n";
 
         MessageLogger::getInstance(criticalMode);
 
-        SyntacticAnalyser sintacticAnalyser(fileName, outFileName, operation);
+        SyntacticAnalyser sintacticAnalyser(fileName, outFileName, operation, overwriteFile);
         QCoreApplication::exit(sintacticAnalyser.execute());
     }
     else if (!hasFileName) QCoreApplication::exit(MessageLogger::getInstance().log(MessageLogger::E_NO_FILE));

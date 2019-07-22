@@ -1,9 +1,11 @@
 #ifndef SINTACTICANALYSER_H
 #define SINTACTICANALYSER_H
 
+#include <QDir>
 #include <QFile>
 #include <QHash>
 #include <QString>
+#include <QFileInfo>
 #include <QTextStream>
 
 #include "programitem.h"
@@ -26,7 +28,8 @@ public:
 
     explicit SyntacticAnalyser(const QString &fileName = "",
                                 const QString &outFileName = "",
-                                OperationType operation = CONVERT_C);
+                                OperationType operation = CONVERT_C,
+                                bool forceOverwrite = false);
     ~SyntacticAnalyser();
 
     int execute();
@@ -38,6 +41,7 @@ private:
     bool programStarted;
     bool programFinished;
 
+    const bool OVERWRITE;
     const QString IN_FILE, OUT_FILE;
     const OperationType OPERATION;
 

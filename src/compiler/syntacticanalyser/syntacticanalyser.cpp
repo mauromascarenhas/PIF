@@ -1,8 +1,9 @@
 #include "syntacticanalyser.h"
 
 SyntacticAnalyser::SyntacticAnalyser(const QString &fileName,
-    const QString &outFileName, OperationType operation) :
-    IN_FILE(fileName), OUT_FILE(outFileName), OPERATION(operation)
+    const QString &outFileName, OperationType operation, bool forceOverwrite) :
+    IN_FILE(fileName), OUT_FILE(outFileName), OPERATION(operation),
+    OVERWRITE(forceOverwrite)
 {
     currentBlock = nullptr;
     mainProgram = nullptr;
@@ -57,7 +58,7 @@ int SyntacticAnalyser::execute(){
 
                                 if (currentToken.type() == Token::IDENTIFIER){
                                     programStarted = true;
-                                    currentBlock = mainProgram = new MainProgramParser();
+                                    currentBlock = mainProgram = new MainProgramParser(currentToken.word());
                                     while(i < lLine.tokenCount()){
                                         currentToken = lLine.nextToken();
                                         if (currentToken.type() != Token::TABULATION)
@@ -397,18 +398,72 @@ int SyntacticAnalyser::execute(){
         }
         sourceFile.close();
 
-        //TODO: Convert
+        QString outExt;
         switch (OPERATION) {
             case CONVERT_CPP:
-                //Convert CPP
+                outExt = ".cpp";
                 break;
             case CONVERT_JAVA:
-                //Convert Java
+                outExt = ".java";
+                //TODO: Check java errors
                 break;
             default:
-                //Convert C
+                outExt = ".c";
                 break;
         }
+
+        QString outFileName;
+        if (OUT_FILE.isEmpty()){
+            if (mainProgram->programName().isEmpty())
+                outFileName = QFileInfo(IN_FILE).absolutePath() + QDir::separator()
+                                + QFileInfo(IN_FILE).baseName()
+                                + outExt;
+            else outFileName = QFileInfo(IN_FILE).absolutePath() + QDir::separator()
+                                + mainProgram->programName()
+                                + outExt;
+        }
+        else if (QFileInfo(OUT_FILE).suffix() == outExt) outFileName = OUT_FILE;
+        else {
+            outFileName = QFileInfo(OUT_FILE).absolutePath() + QDir::separator()
+                            + QFileInfo(OUT_FILE).baseName()
+                            + outExt;
+            MessageLogger::getInstance().log(MessageLogger::INFO,
+                                             QString("Arquivo fornecido como saída (%1) renomeado para : %2")
+                                                .arg(OUT_FILE, outFileName));
+        }
+
+        if (QFile::exists(outFileName)){
+            if (OVERWRITE){
+                if (QFile::remove(outFileName)){
+                    outFileName = QFileInfo(outFileName).absolutePath() + QDir::separator()
+                                    + QFileInfo(outFileName).baseName()
+                                    + outExt;
+                    MessageLogger::getInstance().log(MessageLogger::WARNING,
+                                                     QString("O arquivo fornecido como saída (%1) foi sobrescrito.")
+                                                        .arg(outFileName));
+                }
+                else return MessageLogger::getInstance().log(MessageLogger::E_OUT_CANT_REMOVE, OUT_FILE);
+            }
+            else return MessageLogger::getInstance().log(MessageLogger::E_OUT_EXISTS, OUT_FILE);
+        }
+
+        QFile outFile(outFileName);
+        if (outFile.open(QIODevice::WriteOnly | QIODevice::Text)){
+            QTextStream stream(&outFile);
+            stream.setCodec("UTF-8"); //ISO 8859-1
+            switch (OPERATION) {
+                case CONVERT_CPP:
+                    mainProgram->toOutFile(0, stream, ProgramItem::CPP);
+                    break;
+                case CONVERT_JAVA:
+                    mainProgram->toOutFile(0, stream, ProgramItem::JAVA);
+                    break;
+                default:
+                    mainProgram->toOutFile(0, stream);
+                    break;
+            }
+        }
+        //TODO: Add else statement
 
         return MessageLogger::getInstance().log(MessageLogger::SUCCESS);
     }

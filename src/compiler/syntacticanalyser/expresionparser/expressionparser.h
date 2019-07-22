@@ -26,6 +26,8 @@ public:
 
     Validity validity();
 
+    void toOutFile(int indentFactor, QTextStream &stream, ConvLang conv = C);
+
 private:
     QList<Token> tokens;
     ControlParser::IdentifierType cOperationType;

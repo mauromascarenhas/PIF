@@ -17,3 +17,52 @@ BlockParser::~BlockParser(){
         programItemsC.removeFirst();
     }
 }
+
+void BlockParser::toOutFile(int indentFactor, QTextStream &stream, ConvLang conv){
+    QString tabs = "";
+    for (int i = 0; i < indentFactor; ++i) tabs += "\t";
+    indentFactor++;
+
+    switch (BLOCKTYPE) {
+        case WHILE:
+            stream << QString("%1while (").arg(tabs).toUtf8();
+            blockExpression->toOutFile(0, stream, conv);
+            stream << QString("){\n").toUtf8();
+            for (int i = 0; i < programItemsC.size(); ++i)
+                programItemsC[i]->toOutFile(indentFactor, stream, conv);
+            stream << QString("%1}\n").arg(tabs).toUtf8();
+            break;
+        case DO_WHILE:
+            stream << QString("%1do {\n").arg(tabs).toUtf8();
+            for (int i = 0; i < programItemsC.size(); ++i)
+                programItemsC[i]->toOutFile(indentFactor, stream, conv);
+            stream << QString("} while (").toUtf8();
+            blockExpression->toOutFile(0, stream, conv);
+            stream << QString(");\n").arg(tabs).toUtf8();
+            break;
+        case IF:
+            stream << QString("%1if (").arg(tabs).toUtf8();
+            blockExpression->toOutFile(0, stream, conv);
+            stream << QString("){\n").toUtf8();
+            for (int i = 0; i < programItemsC.size(); ++i)
+                programItemsC[i]->toOutFile(indentFactor, stream, conv);
+            stream << QString("%1}\n").arg(tabs).toUtf8();
+            break;
+        case ELSE_IF:
+            stream << QString("%1else if (").arg(tabs).toUtf8();
+            blockExpression->toOutFile(0, stream, conv);
+            stream << QString("){\n").toUtf8();
+            for (int i = 0; i < programItemsC.size(); ++i)
+                programItemsC[i]->toOutFile(indentFactor, stream, conv);
+            stream << QString("%1}\n").arg(tabs).toUtf8();
+            break;
+        case ELSE:
+            stream << QString("%1else {\n").arg(tabs).toUtf8();
+            for (int i = 0; i < programItemsC.size(); ++i)
+                programItemsC[i]->toOutFile(indentFactor, stream, conv);
+            stream << QString("%1}\n").arg(tabs).toUtf8();
+            break;
+        default:
+            break;
+    }
+}

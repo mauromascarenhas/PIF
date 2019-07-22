@@ -22,6 +22,7 @@ Os parâmetros de configuração são opcionais, sendo eles:
 
 - -c, -C: Considera os avisos como erros, abortando a operação de compilação;
 - -l ["c", "cpp" ou "java"] : estabelece a saída do arquivo fonte (padrão: "c").
+- -f, -F : Força a reescrita do arquivo de saída caso já exista.
 
 ##### Código fonte
 

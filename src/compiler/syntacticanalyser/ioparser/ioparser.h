@@ -28,6 +28,8 @@ public:
     inline void setType(IOType type) { this->ioType = type; }
     inline IOType type(){ return this->ioType; }
 
+    void toOutFile(int indentFactor, QTextStream &stream, ConvLang conv = C);
+
 private:
     IOType ioType;
     QList<Token> arguments;
@@ -35,6 +37,10 @@ private:
 
     bool inValidity();
     bool outValidity();
+
+    void toOutFileC(int indentFactor, QTextStream &stream);
+    void toOutFileCPP(int indentFactor, QTextStream &stream);
+    void toOutFileJAVA(int indentFactor, QTextStream &stream);
 };
 
 #endif // IOPARSER_H

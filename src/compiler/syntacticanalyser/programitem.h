@@ -2,6 +2,7 @@
 #define PROGRAMITEM_H
 
 #include <QString>
+#include <QTextStream>
 
 class ProgramItem
 {
@@ -14,8 +15,8 @@ public:
         CPP,
         JAVA
     };
-    //TODO: Implement (should request open stream as well/instead?)
-    //virtual QString toString(int indentFactor, ConvLang conv = C) = 0;
+
+    virtual void toOutFile(int indentFactor, QTextStream &stream, ConvLang conv = C) = 0;
 };
 
 #endif // PROGRAMITEM_H

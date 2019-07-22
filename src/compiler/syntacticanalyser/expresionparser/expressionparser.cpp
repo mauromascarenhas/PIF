@@ -244,3 +244,24 @@ ExpressionParser::Validity ExpressionParser::validity(){
             return INVALID;
     }
 }
+
+void ExpressionParser::toOutFile(int indentFactor, QTextStream &stream, ConvLang){
+    QString tabs = "";
+    for (int i = 0; i < indentFactor; ++i) tabs += "\t";
+
+    switch (this->validity()) {
+        case VALID_ATTRIB:
+            stream << tabs.toUtf8();
+            for (int i = 0; i < tokens.size(); ++i)
+                stream << QString("%1%2").arg(tokens[i].word(), i == tokens.size() - 1 ? "" : " ").toUtf8();
+            stream << QString(";\n").toUtf8();
+            break;
+        case VALID_NO_ATTRIB:
+            stream << tabs.toUtf8();
+            for (int i = 0; i < tokens.size(); ++i)
+                stream << QString("%1%2").arg(tokens[i].word(), i == tokens.size() - 1 ? "" : " ").toUtf8();
+            break;
+        default:
+            break;
+    }
+}
