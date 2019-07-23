@@ -1,0 +1,14 @@
+programa ConcatNome
+
+	nome, sobrenome, completo : literal
+	
+	escreva "Digite o seu nome : "
+	leia nome
+	
+	escreva "Digite o seu sobrenome : "
+	leia sobrenome
+	
+	completo = nome + " " + sobrenome
+	escreva "Seu nome completo eh : " + completo
+	
+fim-programa

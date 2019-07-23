@@ -56,9 +56,12 @@ void MainProgramParser::toOutFileCPP(int indentFactor, QTextStream &stream){
     stream << QString("// Programa %1 gerado automaticamente por PIFC\n\n").arg(PROGRAM_NAME).toUtf8();
     stream << QString("%1#include <string>\n"
                       "%1#include <cstdlib>\n"
+                      "%1#include <sstream>\n"
                       "%1#include <iostream>\n"
                       "\n"
                       "%1using namespace std;\n"
+                      "\n"
+                      "%1stringstream __sstrm__;\n"
                       "\n"
                       "%1int main(int argc, char *argv[]){\n").arg(tabs).toUtf8();
 

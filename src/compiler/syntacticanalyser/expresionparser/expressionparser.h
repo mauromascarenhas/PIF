@@ -32,6 +32,10 @@ private:
     QList<Token> tokens;
     ControlParser::IdentifierType cOperationType;
     QHash<QString, ControlParser::IdentifierType> declaredVars;
+
+    void toOutFileC(int indentFactor, QTextStream &stream);
+    void toOutFileCPP(int indentFactor, QTextStream &stream);
+    void toOutFileJAVA(int indentFactor, QTextStream &stream);
 };
 
 #endif // EXPRESSIONPARSER_H

@@ -18,7 +18,9 @@ public:
     enum LogType{
         E_CANT_OPEN_FILE,
         E_CANT_OPEN_FILE_O,
+        E_EMPTY_JAVA_CLASS,
         E_INVALID_ARGS,
+        E_INVALID_JAVA_CLASS,
         E_INVALID_T,
         E_UNEXPECTED_T,
         E_UNEXPECTED_T_EXP,

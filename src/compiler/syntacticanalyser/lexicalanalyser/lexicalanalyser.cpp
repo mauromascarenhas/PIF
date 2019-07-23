@@ -4,14 +4,13 @@ LexicalAnalyser::LexicalAnalyser(const QString &line) :
     LANGUAGE_TEMPLATE("((\\b\\d+(?:\\.\\d+)?)"
                       "|((numérico|literal|booleano|programa|senão|se|então|fim-se|faça|enquanto|fim-enquanto|fim-programa|leia|escreva)\\b)"
                       "|(\\t| {4}))|([:,])"
-                      "|([\\wÇ-ÜÀ-ÁãÃÊ-ÏÌÓ-Ýá-ñ]+\\b)"
+                      "|([a-zA-Z][\\w]*\\b)"
                       "|((\\<\\=|\\>\\=|\\<|\\>|\\!\\=|\\=\\=|\\!)|(e|ou)\\b)"
                       "|((verdadeiro|falso)\\b)|([\\+\\-\\*\\/])|(\\=)"
                       "|(\\()|(\\))"
                       "|(\"(?:[^\"\\\\]++|\\\\.)*+\")"
                       "|(\\\\)|([^\\s\\1])")
 {
-    //WARNING: Replace id chars if > 127 (ASCII)
     this->count = 0;
     this->line = line;
     getMatches();

@@ -191,8 +191,16 @@ void IOParser::toOutFileC(int indentFactor, QTextStream &stream){
             }
         }
         stream << QString("\\n\", ").toUtf8();
-        for(int i = 0; i < arguments.size(); ++i)
-            stream << QString("%1%2").arg(arguments[i].word()).arg(i == arguments.size() - 1 ? ");\n" : ", ").toUtf8();
+        for(int i = 0; i < arguments.size(); ++i){
+            switch (arguments[i].type()) {
+            case Token::BOOLEAN_VAL:
+                stream << QString("%1%2").arg(arguments[i].word() == "verdadeiro" ? "true" : "false").arg(i == arguments.size() - 1 ? ");\n" : ", ").toUtf8();
+                break;
+            default:
+                stream << QString("%1%2").arg(arguments[i].word()).arg(i == arguments.size() - 1 ? ");\n" : ", ").toUtf8();
+                break;
+            }
+        }
     }
 }
 

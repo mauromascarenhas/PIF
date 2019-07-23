@@ -12,7 +12,7 @@ ExpressionParser::~ExpressionParser(){
 }
 
 ExpressionParser::Validity ExpressionParser::validity(){
-    if (!tokens.size()) return VALID_NO_ATTRIB;
+    if (!tokens.size()) return INVALID;
 
     //WARNING: Missing support for operation precedence
     bool hasFinished = false;
@@ -212,6 +212,8 @@ ExpressionParser::Validity ExpressionParser::validity(){
                                                          "", 0, current);
                         return INVALID;
                     }
+                case Token::BOOLEAN_VAL:
+                case Token::LITERAL:
                 case Token::NUMERIC:
                     if (oldToken.type() == Token::ARITHMETIC_OP
                             || oldToken.type() == Token::ASSIGNMENT) oldToken = current;
@@ -245,18 +247,188 @@ ExpressionParser::Validity ExpressionParser::validity(){
     }
 }
 
-void ExpressionParser::toOutFile(int indentFactor, QTextStream &stream, ConvLang){
+void ExpressionParser::toOutFile(int indentFactor, QTextStream &stream, ConvLang conv){
+    switch (conv) {
+        case CPP:
+            toOutFileCPP(indentFactor, stream);
+            break;
+        case JAVA:
+            toOutFileJAVA(indentFactor, stream);
+            break;
+        default:
+            toOutFileC(indentFactor, stream);
+            break;
+    }
+}
+
+void ExpressionParser::toOutFileC(int indentFactor, QTextStream &stream){
     QString tabs = "";
     for (int i = 0; i < indentFactor; ++i) tabs += "\t";
 
-    //FIXME: Literal expressions must behave properly in each output language
-
     switch (this->validity()) {
         case VALID_ATTRIB:
+            switch (cOperationType) {
+                case ControlParser::BOOLEAN:
+                case ControlParser::NUMERIC:
+                    stream << tabs.toUtf8();
+                    for (int i = 0; i < tokens.size(); ++i)
+                        stream << QString("%1%2").arg(tokens[i].word(), i == tokens.size() - 1 ? "" : " ").toUtf8();
+                    stream << QString(";\n").toUtf8();
+                    break;
+                default:
+                {
+                    stream << QString("%1snprintf(%2, 1024, \"").arg(tabs, tokens.first().word()).toUtf8();
+                    for (int i = 2; i < tokens.size(); ++i){
+                        switch (tokens[i].type()) {
+                            case Token::BOOLEAN_VAL:
+                                stream << QString("%d").toUtf8();
+                                break;
+                            case Token::NUMERIC:
+                                stream << QString("%lf").toUtf8();
+                                break;
+                            case Token::LITERAL:
+                                stream << QString("%s").toUtf8();
+                                break;
+                            case Token::IDENTIFIER:
+                                switch (declaredVars.value(tokens[i].word())) {
+                                    case ControlParser::BOOLEAN:
+                                        stream << QString("%d").toUtf8();
+                                        break;
+                                    case ControlParser::NUMERIC:
+                                        stream << QString("%lf").toUtf8();
+                                        break;
+                                    default:
+                                        stream << QString("%s").toUtf8();
+                                        break;
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    stream << QString("\", ").toUtf8();
+                    for(int i = 2; i < tokens.size(); ++i){
+                        switch (tokens[i].type()) {
+                        case Token::ARITHMETIC_OP:
+                            break;
+                        case Token::BOOLEAN_VAL:
+                            stream << QString("%1%2").arg(tokens[i].word() == "verdadeiro" ? "true" : "false").arg(i == tokens.size() - 1 ? ");\n" : ", ").toUtf8();
+                            break;
+                        default:
+                            stream << QString("%1%2").arg(tokens[i].word()).arg(i == tokens.size() - 1 ? ");\n" : ", ").toUtf8();
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+            break;
+        case VALID_NO_ATTRIB:
             stream << tabs.toUtf8();
             for (int i = 0; i < tokens.size(); ++i)
                 stream << QString("%1%2").arg(tokens[i].word(), i == tokens.size() - 1 ? "" : " ").toUtf8();
-            stream << QString(";\n").toUtf8();
+            break;
+        default:
+            break;
+    }
+}
+
+void ExpressionParser::toOutFileCPP(int indentFactor, QTextStream &stream){
+    QString tabs = "";
+    for (int i = 0; i < indentFactor; ++i) tabs += "\t";
+
+    switch (this->validity()) {
+        case VALID_ATTRIB:
+            switch (cOperationType) {
+                case ControlParser::BOOLEAN:
+                case ControlParser::NUMERIC:
+                    stream << tabs.toUtf8();
+                    for (int i = 0; i < tokens.size(); ++i)
+                        stream << QString("%1%2").arg(tokens[i].word(), i == tokens.size() - 1 ? "" : " ").toUtf8();
+                    stream << QString(";\n").toUtf8();
+                    break;
+                default:
+                {
+                    stream << QString("%1__sstrm__ << boolalpha << ").arg(tabs).toUtf8();
+                    for (int i = 2; i < tokens.size(); ++i){
+                        switch (tokens[i].type()) {
+                            case Token::ARITHMETIC_OP:
+                                break;
+                            case Token::BOOLEAN_VAL:
+                                stream << QString("%1%2").arg(tokens[i].word() == "verdadeiro" ? "true" : "false", i == tokens.size() - 1 ? ";\n" : " << ").toUtf8();
+                                break;
+                            default:
+                                stream << QString("%1%2").arg(tokens[i].word(), i == tokens.size() - 1 ? ";\n" : " << ").toUtf8();
+                                break;
+                        }
+                    }
+                    stream << QString("%1%2 = __sstrm__.str();\n"
+                                      "%1__sstrm__.str(string());\n").arg(tabs, tokens.first().word()).toUtf8();
+                    break;
+                }
+            }
+            break;
+        case VALID_NO_ATTRIB:
+            stream << tabs.toUtf8();
+            for (int i = 0; i < tokens.size(); ++i)
+                stream << QString("%1%2").arg(tokens[i].word(), i == tokens.size() - 1 ? "" : " ").toUtf8();
+            break;
+        default:
+            break;
+    }
+}
+
+void ExpressionParser::toOutFileJAVA(int indentFactor, QTextStream &stream){
+    QString tabs = "";
+    for (int i = 0; i < indentFactor; ++i) tabs += "\t";
+
+    switch (this->validity()) {
+        case VALID_ATTRIB:
+            switch (cOperationType) {
+                case ControlParser::BOOLEAN:
+                case ControlParser::NUMERIC:
+                    stream << tabs.toUtf8();
+                    for (int i = 0; i < tokens.size(); ++i)
+                        stream << QString("%1%2").arg(tokens[i].word(), i == tokens.size() - 1 ? "" : " ").toUtf8();
+                    stream << QString(";\n").toUtf8();
+                    break;
+                default:
+                {
+                    stream << QString("%1%2 = ").arg(tabs, tokens.first().word()).toUtf8();
+                    for (int i = 2; i < tokens.size(); ++i){
+                        QString concat = i == tokens.size() - 1 ? ";\n" : " + ";
+                        switch (tokens[i].type()) {
+                            case Token::BOOLEAN_VAL:
+                                stream << QString("Boolean.toString(%1)%2").arg(tokens[i].word() == "verdadeiro" ? "true" : "false",
+                                                                                    concat).toUtf8();
+                                break;
+                            case Token::NUMERIC:
+                                stream << QString("Double.toString(%1)%2").arg(tokens[i].word() == "verdadeiro" ? "true" : "false",
+                                                                                    concat).toUtf8();
+                                break;
+                            case Token::LITERAL:
+                                stream << QString("%1%2").arg(tokens[i].word(), concat).toUtf8();
+                                break;
+                            case Token::IDENTIFIER:
+                                switch (declaredVars.value(tokens[i].word())) {
+                                    case ControlParser::BOOLEAN:
+                                        stream << QString("Boolean.toString(%1)%2").arg(tokens[i].word(), concat).toUtf8();
+                                        break;
+                                    case ControlParser::NUMERIC:
+                                        stream << QString("Double.toString(%1)%2").arg(tokens[i].word(), concat).toUtf8();
+                                        break;
+                                    default:
+                                        stream << QString("%1%2").arg(tokens[i].word(), concat).toUtf8();
+                                        break;
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    break;
+                }
+            }
             break;
         case VALID_NO_ATTRIB:
             stream << tabs.toUtf8();

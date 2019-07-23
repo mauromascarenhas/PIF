@@ -1,0 +1,20 @@
+programa NomeIdade
+
+	nome, frase : literal
+	nascimento, ano, idade : numérico
+	
+	escreva "Digite o seu nome : "
+	leia nome
+	
+	escreva "Digite o ano atual : "
+	leia ano
+	
+	escreva "Digite o ano em que voce nasceu : "
+	leia nascimento
+	
+	idade = ano - nascimento
+	
+	frase = nome + ", voce ja tem " + idade + " anos de idade!"
+	escreva frase
+	
+fim-programa

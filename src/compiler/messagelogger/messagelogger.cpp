@@ -51,9 +51,18 @@ int MessageLogger::log(LogType type, const QString &appendMsg,
                 logMessage = QString("[ ERRO ] Não foi escrever no arquivo de saída. Você tem as permissões necessárias? %1").arg(appendMsg);
                 returnVal = 3;
                 break;
+            case E_EMPTY_JAVA_CLASS:
+                logMessage = QString("[ ERRO ] O procedimento principal não foi nomeado. "
+                                     "Para que a conversão possa ser feita para Java, um nome deve ser fornecido. %1").arg(appendMsg);
+                returnVal = 3;
+                break;
             case E_INVALID_ARGS:
                 logMessage = QString("[ ERRO ] Argumentos de inicialização inválidos. %1").arg(appendMsg);
                 returnVal = 1;
+                break;
+            case E_INVALID_JAVA_CLASS:
+                logMessage = QString("[ ERRO ] O Nome do procedimento principal não corresponde ao nome base do arquivo fornecido como saída. %1").arg(appendMsg);
+                returnVal = 3;
                 break;
             case E_INVALID_T:
                 logMessage = QString("[ ERRO ] Token inválido na linha %1. Token : '%2'. %3").arg(line).arg(token.word(), appendMsg);

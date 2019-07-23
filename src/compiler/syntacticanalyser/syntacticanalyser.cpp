@@ -96,7 +96,6 @@ int SyntacticAnalyser::execute(){
             LexicalAnalyser lLine(line);
             qInfo() << "Token count : " << lLine.tokenCount() << "\n";
 
-            //TODO: define this block as a method?
             int tabulation, i;
             Token currentToken;
             bool hasCommand = false;
@@ -405,7 +404,6 @@ int SyntacticAnalyser::execute(){
                 break;
             case CONVERT_JAVA:
                 outExt = ".java";
-                //TODO: Check java errors
                 break;
             default:
                 outExt = ".c";
@@ -430,6 +428,15 @@ int SyntacticAnalyser::execute(){
             MessageLogger::getInstance().log(MessageLogger::INFO,
                                              QString("Arquivo fornecido como saída (%1) renomeado para : %2")
                                                 .arg(OUT_FILE, outFileName));
+        }
+
+        if (OPERATION == CONVERT_JAVA){
+            if (mainProgram->programName().isEmpty())
+                return MessageLogger::getInstance().log(MessageLogger::E_EMPTY_JAVA_CLASS);
+            else if (QFileInfo(outFileName).baseName() != mainProgram->programName())
+                return MessageLogger::getInstance().log(MessageLogger::E_INVALID_JAVA_CLASS,
+                                                        QString("Nome da classe : '%1'. Nome base do arquivo : '%2'")
+                                                            .arg(mainProgram->programName(), QFileInfo(OUT_FILE).baseName()));
         }
 
         if (QFile::exists(outFileName)){
