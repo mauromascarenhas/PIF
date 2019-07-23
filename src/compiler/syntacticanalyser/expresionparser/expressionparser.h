@@ -29,6 +29,8 @@ public:
     void toOutFile(int indentFactor, QTextStream &stream, ConvLang conv = C);
 
 private:
+    int parenthesesCount;
+
     QList<Token> tokens;
     ControlParser::IdentifierType cOperationType;
     QHash<QString, ControlParser::IdentifierType> declaredVars;

@@ -5,6 +5,7 @@ ExpressionParser::ExpressionParser(const QHash<QString, ControlParser::Identifie
 {
     this->declaredVars = globalVars;
     this->cOperationType = ControlParser::LITERAL;
+    this->parenthesesCount = 0;
 }
 
 ExpressionParser::~ExpressionParser(){
@@ -22,6 +23,8 @@ ExpressionParser::Validity ExpressionParser::validity(){
     Token oldToken = current;
 
     switch (oldToken.type()) {
+//        case Token::PRIORITY_O:
+//            parenthesesCount++;
         case Token::LITERAL:
         case Token::NUMERIC:
         case Token::BOOLEAN_VAL:
@@ -56,6 +59,8 @@ ExpressionParser::Validity ExpressionParser::validity(){
             return INVALID;
     }
     oldToken = current;
+
+    //BUG: It does not accept literals (each language has its own implementation)
 
     if (cOperationType == ControlParser::BOOLEAN){
         for (int i = 2; i < tokens.length(); ++i){
@@ -93,6 +98,7 @@ ExpressionParser::Validity ExpressionParser::validity(){
                                                          "", 0, current);
                         return INVALID;
                     }
+                case Token::NUMERIC:
                 case Token::BOOLEAN_VAL:
                     if (oldToken.type() == Token::BOOLEAN_OP
                             || oldToken.type() == Token::ASSIGNMENT) oldToken = current;

@@ -2,8 +2,8 @@
 
 SyntacticAnalyser::SyntacticAnalyser(const QString &fileName,
     const QString &outFileName, OperationType operation, bool forceOverwrite) :
-    IN_FILE(fileName), OUT_FILE(outFileName), OPERATION(operation),
-    OVERWRITE(forceOverwrite)
+    OVERWRITE(forceOverwrite), IN_FILE(fileName), OUT_FILE(outFileName),
+    OPERATION(operation)
 {
     currentBlock = nullptr;
     mainProgram = nullptr;
@@ -30,7 +30,7 @@ int SyntacticAnalyser::execute(){
             QString line = stream.readLine();
             qInfo() << "Line : " << line;
             LexicalAnalyser lLine(line);
-            qInfo() << "Token count : " << lLine.tokenCount() << "\n";
+            qInfo() << "Token count : " << lLine.tokenCount();
 
             int tabulation, i;
             Token currentToken;
@@ -47,10 +47,12 @@ int SyntacticAnalyser::execute(){
                 switch (currentToken.type()) {
                     case Token::RESERVED:
                         if (currentToken.word() == "programa"){
-                            if (tabulation != indentFactor)
-                                MessageLogger::getInstance().log(MessageLogger::W_INDENT_FACTOR,
-                                    QString("Esperado %1, obtido %2").arg(indentFactor, tabulation),
-                                    lineCounter);
+                            if (tabulation != indentFactor){
+                                int ret = MessageLogger::getInstance().log(MessageLogger::W_INDENT_FACTOR,
+                                            QString("Esperado %1, obtido %2").arg(indentFactor, tabulation),
+                                            lineCounter);
+                                if (ret) return ret;
+                            }
 
                             if(i < lLine.tokenCount()){
                                 currentToken = lLine.nextToken();
@@ -79,11 +81,10 @@ int SyntacticAnalyser::execute(){
                         return MessageLogger::getInstance().log(MessageLogger::E_UNEXPECTED_T,
                                     "Não pode haver qualquer texto antes da declaração do programa.", lineCounter,
                                     currentToken);
-                        break;
                 }
             }
 
-            qDebug() << "Indent factor : " << indentFactor;
+            qDebug() << "Indent factor : " << indentFactor << "\n";
         }
 
         if (stream.atEnd() && !programStarted)
@@ -111,11 +112,12 @@ int SyntacticAnalyser::execute(){
                 Token oldToken;
                 switch (currentToken.type()) {
                     case Token::IDENTIFIER:
-                        //WARNING: Return if critical!
-                        if (tabulation != indentFactor)
-                            MessageLogger::getInstance().log(MessageLogger::W_INDENT_FACTOR,
-                                QString("Esperado %1, obtido %2").arg(indentFactor, tabulation),
-                                lineCounter);
+                        if (tabulation != indentFactor){
+                            int ret = MessageLogger::getInstance().log(MessageLogger::W_INDENT_FACTOR,
+                                        QString("Esperado %1, obtido %2").arg(indentFactor, tabulation),
+                                        lineCounter);
+                            if (ret) return ret;
+                        }
 
                         oldToken = currentToken;
                         currentToken = lLine.nextToken();
@@ -132,22 +134,34 @@ int SyntacticAnalyser::execute(){
                                     controlParser->addToken(currentToken);
                                     i++;
                                 }
-                                qDebug() << controlParser->insertNewVars(availableVars);
+                                if (!controlParser->insertNewVars(availableVars))
+                                    return MessageLogger::getInstance().log(MessageLogger::E_UNDEFINED, "", lineCounter);
                                 currentBlock->addProgramItem(controlParser);
                                 break;
                             }
                             case Token::ASSIGNMENT:
                             {
-                                ExpressionParser *expressionParser = new ExpressionParser(availableVars);
-                                expressionParser->addToken(oldToken);
-                                expressionParser->addToken(currentToken);
+                                ExpressionParser *expression = new ExpressionParser(availableVars);
+                                expression->addToken(oldToken);
+                                expression->addToken(currentToken);
                                 while(i < lLine.tokenCount()){
                                     currentToken = lLine.nextToken();
-                                    expressionParser->addToken(currentToken);
+                                    expression->addToken(currentToken);
                                     i++;
                                 }
-                                qDebug() << expressionParser->validity();
-                                currentBlock->addProgramItem(expressionParser);
+
+                                ExpressionParser::Validity eVal = expression->validity();
+                                if (eVal != ExpressionParser::VALID_ATTRIB){
+                                    if (eVal == ExpressionParser::VALID_NO_ATTRIB)
+                                        return MessageLogger::getInstance().log(MessageLogger::E_UNDEFINED,
+                                                                                "Expressões de instrução (booleanas, numéricas ou literais) devem realizar atribuições.",
+                                                                                lineCounter);
+                                    return MessageLogger::getInstance().log(MessageLogger::E_UNDEFINED,
+                                                                            "", lineCounter);
+                                }
+
+
+                                currentBlock->addProgramItem(expression);
                                 break;
                             }
                             default:
@@ -159,10 +173,12 @@ int SyntacticAnalyser::execute(){
 
                     case Token::RESERVED:
                         if (currentToken.word().startsWith("fim-")){
-                            if (tabulation != indentFactor - 1)
-                                MessageLogger::getInstance().log(MessageLogger::W_INDENT_FACTOR,
-                                    QString("Esperado %1, obtido %2").arg(indentFactor, tabulation),
-                                    lineCounter);
+                            if (tabulation != indentFactor - 1){
+                                int ret = MessageLogger::getInstance().log(MessageLogger::W_INDENT_FACTOR,
+                                            QString("Esperado %1, obtido %2").arg(indentFactor, tabulation),
+                                            lineCounter);
+                                if (ret) return ret;
+                            }
 
                             QString blockEnd;
                             switch (currentBlock->blockType()) {
@@ -183,7 +199,6 @@ int SyntacticAnalyser::execute(){
                                                 "", lineCounter, currentToken);
                             }
                             if (currentToken.word() == blockEnd){
-                                currentBlock->setSelfClosed(true);
                                 currentBlock = currentBlock->parent();
                                 indentFactor--;
 
@@ -201,10 +216,12 @@ int SyntacticAnalyser::execute(){
                         }
                         else if (currentToken.word() == "enquanto"){
                             if (currentBlock->blockType() == BlockParser::DO_WHILE){
-                                if (tabulation != indentFactor - 1)
-                                    MessageLogger::getInstance().log(MessageLogger::W_INDENT_FACTOR,
-                                        QString("Esperado %1, obtido %2").arg(indentFactor, tabulation),
-                                        lineCounter);
+                                if (tabulation != indentFactor - 1){
+                                    int ret = MessageLogger::getInstance().log(MessageLogger::W_INDENT_FACTOR,
+                                                QString("Esperado %1, obtido %2").arg(indentFactor, tabulation),
+                                                lineCounter);
+                                    if (ret) return ret;
+                                }
 
                                 if (i < lLine.tokenCount()){
                                     ExpressionParser *expression = new ExpressionParser(availableVars);
@@ -212,7 +229,17 @@ int SyntacticAnalyser::execute(){
                                         expression->addToken(lLine.nextToken());
                                         i++;
                                     }
-                                    qDebug() << expression->validity();
+
+                                    ExpressionParser::Validity eVal = expression->validity();
+                                    if (eVal != ExpressionParser::VALID_NO_ATTRIB){
+                                        if (eVal == ExpressionParser::VALID_ATTRIB)
+                                            return MessageLogger::getInstance().log(MessageLogger::E_UNEXPECTED_T_EXP,
+                                                                                    "Expressões de bloco não devem fazer atribuições.",
+                                                                                    lineCounter, Token("="));
+                                        return MessageLogger::getInstance().log(MessageLogger::E_UNDEFINED,
+                                                                                "", lineCounter);
+                                    }
+
                                     currentBlock->setBlockExpression(expression);
                                     currentBlock = currentBlock->parent();
                                     indentFactor--;
@@ -221,10 +248,12 @@ int SyntacticAnalyser::execute(){
                                                 "Esperado identificador ou expressão.", lineCounter);
                             }
                             else {
-                                if (tabulation != indentFactor)
-                                    MessageLogger::getInstance().log(MessageLogger::W_INDENT_FACTOR,
-                                        QString("Esperado %1, obtido %2").arg(indentFactor, tabulation),
-                                        lineCounter);
+                                if (tabulation != indentFactor){
+                                    int ret = MessageLogger::getInstance().log(MessageLogger::W_INDENT_FACTOR,
+                                                QString("Esperado %1, obtido %2").arg(indentFactor, tabulation),
+                                                lineCounter);
+                                    if (ret) return ret;
+                                }
 
                                 ExpressionParser *expression = new ExpressionParser(availableVars);
 
@@ -246,7 +275,16 @@ int SyntacticAnalyser::execute(){
                                                     lineCounter, current);
                                 }
 
-                                qDebug() << expression->validity();
+                                ExpressionParser::Validity eVal = expression->validity();
+                                if (eVal != ExpressionParser::VALID_NO_ATTRIB){
+                                    if (eVal == ExpressionParser::VALID_ATTRIB)
+                                        return MessageLogger::getInstance().log(MessageLogger::E_UNEXPECTED_T_EXP,
+                                                                                "Expressões de bloco não devem fazer atribuições.",
+                                                                                lineCounter, Token("="));
+                                    return MessageLogger::getInstance().log(MessageLogger::E_UNDEFINED,
+                                                                            "", lineCounter);
+                                }
+
                                 BlockParser *block = new BlockParser(currentBlock, BlockParser::WHILE, expression);
                                 currentBlock->addProgramItem(block);
                                 currentBlock = block;
@@ -254,10 +292,12 @@ int SyntacticAnalyser::execute(){
                             }
                         }
                         else if (currentToken.word() == "se"){
-                            if (tabulation != indentFactor)
-                                MessageLogger::getInstance().log(MessageLogger::W_INDENT_FACTOR,
-                                    QString("Esperado %1, obtido %2").arg(indentFactor, tabulation),
-                                    lineCounter);
+                            if (tabulation != indentFactor){
+                                int ret = MessageLogger::getInstance().log(MessageLogger::W_INDENT_FACTOR,
+                                            QString("Esperado %1, obtido %2").arg(indentFactor, tabulation),
+                                            lineCounter);
+                                if (ret) return ret;
+                            }
 
                             ExpressionParser *expression = new ExpressionParser(availableVars);
 
@@ -279,18 +319,28 @@ int SyntacticAnalyser::execute(){
                                                 lineCounter, current);
                             }
 
-                            //TODO: Check expression validity
-                            qDebug() << expression->validity();
+                            ExpressionParser::Validity eVal = expression->validity();
+                            if (eVal != ExpressionParser::VALID_NO_ATTRIB){
+                                if (eVal == ExpressionParser::VALID_ATTRIB)
+                                    return MessageLogger::getInstance().log(MessageLogger::E_UNEXPECTED_T_EXP,
+                                                                            "Expressões de bloco não devem fazer atribuições.",
+                                                                            lineCounter, Token("="));
+                                return MessageLogger::getInstance().log(MessageLogger::E_UNDEFINED,
+                                                                        "", lineCounter);
+                            }
+
                             BlockParser *block = new BlockParser(currentBlock, BlockParser::IF, expression);
                             currentBlock->addProgramItem(block);
                             currentBlock = block;
                             indentFactor++;
                         }
                         else if (currentToken.word() == "senão"){
-                            if (tabulation != indentFactor - 1)
-                                MessageLogger::getInstance().log(MessageLogger::W_INDENT_FACTOR,
-                                    QString("Esperado %1, obtido %2").arg(indentFactor, tabulation),
-                                    lineCounter);
+                            if (tabulation != indentFactor - 1){
+                                int ret = MessageLogger::getInstance().log(MessageLogger::W_INDENT_FACTOR,
+                                            QString("Esperado %1, obtido %2").arg(indentFactor, tabulation),
+                                            lineCounter);
+                                if (ret) return ret;
+                            }
 
                             if (currentBlock->blockType() != BlockParser::IF &&
                                     currentBlock->blockType() != BlockParser::ELSE_IF)
@@ -308,7 +358,7 @@ int SyntacticAnalyser::execute(){
                                     bool hasNFinished = true;
                                     while(i < lLine.tokenCount() && hasNFinished){
                                         Token tCurrent = lLine.nextToken();
-                                        if (tCurrent.word() == "faça") hasNFinished = false;
+                                        if (tCurrent.word() == "então") hasNFinished = false;
                                         else expression->addToken(tCurrent);
                                         i++;
                                     }
@@ -324,7 +374,17 @@ int SyntacticAnalyser::execute(){
                                     }
 
                                     currentBlock = currentBlock->parent();
-                                    qDebug() << expression->validity();
+
+                                    ExpressionParser::Validity eVal = expression->validity();
+                                    if (eVal != ExpressionParser::VALID_NO_ATTRIB){
+                                        if (eVal == ExpressionParser::VALID_ATTRIB)
+                                            return MessageLogger::getInstance().log(MessageLogger::E_UNEXPECTED_T_EXP,
+                                                                                    "Expressões de bloco não devem fazer atribuições.",
+                                                                                    lineCounter, Token("="));
+                                        return MessageLogger::getInstance().log(MessageLogger::E_UNDEFINED,
+                                                                                "", lineCounter);
+                                    }
+
                                     BlockParser *block = new BlockParser(currentBlock, BlockParser::ELSE_IF, expression);
                                     currentBlock->addProgramItem(block);
                                     currentBlock = block;
@@ -334,37 +394,43 @@ int SyntacticAnalyser::execute(){
                             }
                             else {
                                 currentBlock = currentBlock->parent();
-                                BlockParser block(currentBlock, BlockParser::ELSE);
-                                block.setSelfClosed(true);
-                                currentBlock = &block;
+                                BlockParser *block = new BlockParser(currentBlock, BlockParser::ELSE);
+                                currentBlock->addProgramItem(block);
+                                currentBlock = block;
                             }
                         }
                         else if (currentToken.word() == "leia"){
-                            if (tabulation != indentFactor)
-                                MessageLogger::getInstance().log(MessageLogger::W_INDENT_FACTOR,
-                                    QString("Esperado %1, obtido %2").arg(indentFactor, tabulation),
-                                    lineCounter);
+                            if (tabulation != indentFactor){
+                                int ret = MessageLogger::getInstance().log(MessageLogger::W_INDENT_FACTOR,
+                                            QString("Esperado %1, obtido %2").arg(indentFactor, tabulation),
+                                            lineCounter);
+                                if (ret) return ret;
+                            }
 
                             IOParser *inExpression = new IOParser(IOParser::INPUT, availableVars);
                             while(i < lLine.tokenCount()){
                                 inExpression->addToken(lLine.nextToken());
                                 i++;
                             }
-                            qDebug() << inExpression->isValid();
+                            if (!inExpression->isValid())
+                                return MessageLogger::getInstance().log(MessageLogger::E_UNDEFINED, "", lineCounter);
                             currentBlock->addProgramItem(inExpression);
                         }
                         else if (currentToken.word() == "escreva"){
-                            if (tabulation != indentFactor)
-                                MessageLogger::getInstance().log(MessageLogger::W_INDENT_FACTOR,
-                                    QString("Esperado %1, obtido %2").arg(indentFactor, tabulation),
-                                    lineCounter);
+                            if (tabulation != indentFactor){
+                                int ret = MessageLogger::getInstance().log(MessageLogger::W_INDENT_FACTOR,
+                                            QString("Esperado %1, obtido %2").arg(indentFactor, tabulation),
+                                            lineCounter);
+                                if (ret) return ret;
+                            }
 
                             IOParser *outExpression = new IOParser(IOParser::OUTPUT, availableVars);
                             while(i < lLine.tokenCount()){
                                 outExpression->addToken(lLine.nextToken());
                                 i++;
                             }
-                            qDebug() << outExpression->isValid();
+                            if (!outExpression->isValid())
+                                return MessageLogger::getInstance().log(MessageLogger::E_UNDEFINED, "", lineCounter);
                             currentBlock->addProgramItem(outExpression);
                         }
                         else return MessageLogger::getInstance().log(MessageLogger::E_UNEXPECTED_T,
@@ -374,7 +440,6 @@ int SyntacticAnalyser::execute(){
                     default:
                         return MessageLogger::getInstance().log(MessageLogger::E_UNEXPECTED_T,
                                     "", lineCounter, currentToken);
-                        break;
                 }
             }
         }

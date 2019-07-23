@@ -1,0 +1,18 @@
+programa MaiorIdade
+
+	nome : literal
+	idade : numérico
+
+	escreva "Digite seu nome : "
+	leia nome
+	
+	escreva "Digite sua idade : "
+	leia idade
+	
+	se idade >= 18 então
+		escreva nome + " voce eh maior de idade."
+	senão
+		escreva nome + " voce eh menor de idade."
+	fim-se
+	
+fim-programa

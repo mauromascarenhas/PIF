@@ -32,9 +32,6 @@ public:
     inline ExpressionParser * getBlockExpression() { return this->blockExpression; }
     inline void setBlockExpression(ExpressionParser *expression) { this->blockExpression = expression; }
 
-    inline bool isSelfClosed() { return this->selfClosed; }
-    inline void setSelfClosed(bool selfClosed) { this->selfClosed = selfClosed; }
-
     inline void addProgramItem(ProgramItem *programItem) { this->programItemsC.append(programItem); }
     inline QList<ProgramItem*> programItems() { return this->programItemsC; }
 
@@ -46,8 +43,6 @@ private:
     BlockParser *parentBlock;
 
 protected:
-    bool selfClosed;
-
     const BlockType BLOCKTYPE;
 
     QList<ProgramItem*> programItemsC;

@@ -1,0 +1,26 @@
+programa IMC
+
+	imc, peso, altura : numérico
+
+	escreva "Digite seu peso e sua altura, respectivamente : "
+	leia peso, altura
+	
+	imc = peso / ( altura * altura )
+	
+	se imc > 40 então
+		escreva "Obesidade 3 (Morbida)."
+	senão se imc > 35 então
+		escreva "Obesidade 2 (Severa)."
+	senão se imc > 30 então
+		escreva "Obesidade 1."
+	senão se imc > 25 então
+		escreva "Acima do peso."
+	senão se imc > 18.5 então
+		escreva "Peso normal."
+	senão se imc > 17 então
+		escreva "Abaixo do peso."
+	senão
+		escreva "Muito abaixo do peso."
+	fim-se
+	
+fim-programa
