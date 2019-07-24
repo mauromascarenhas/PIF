@@ -15,16 +15,17 @@ ExpressionParser::~ExpressionParser(){
 ExpressionParser::Validity ExpressionParser::validity(){
     if (!tokens.size()) return INVALID;
 
-    //WARNING: Missing support for operation precedence
     bool hasFinished = false;
     bool canAttribute = true;
     bool invalidSemantic = false;
+    bool startedWPrecedence = false;
     Token current = tokens.first();
     Token oldToken = current;
 
     switch (oldToken.type()) {
-//        case Token::PRIORITY_O:
-//            parenthesesCount++;
+        case Token::PRIORITY_O:
+            parenthesesCount++;
+            startedWPrecedence = true;
         case Token::LITERAL:
         case Token::NUMERIC:
         case Token::BOOLEAN_VAL:
@@ -41,18 +42,32 @@ ExpressionParser::Validity ExpressionParser::validity(){
     }
 
     if (tokens.length() == 1){
-        if (oldToken.type() == Token::IDENTIFIER
-                && cOperationType == ControlParser::BOOLEAN)
+        if ((oldToken.type() == Token::IDENTIFIER
+                || oldToken.type() == Token::BOOLEAN_VAL)
+                    && cOperationType == ControlParser::BOOLEAN)
             return VALID_NO_ATTRIB;
         else return INVALID;
     }
 
-    current = tokens[1];    
+    int k = 1;
+    if (startedWPrecedence)
+        for (k = 1; k < tokens.length() && current.type() == Token::PRIORITY_O; ++k){
+            oldToken = current;
+            current = tokens[k];
+        }
+    else current = tokens[k++];
+
+    if (k == tokens.length()) return INVALID;
+
     switch (current.type()) {
         case Token::BOOLEAN_OP:
             canAttribute = false;
             cOperationType = ControlParser::BOOLEAN;
             break;
+        case Token::IDENTIFIER:
+        case Token::NUMERIC:
+        case Token::BOOLEAN_VAL:
+            if (startedWPrecedence) break;
         case Token::ASSIGNMENT:
             if (oldToken.type() == Token::IDENTIFIER) break;
         default:
@@ -60,10 +75,11 @@ ExpressionParser::Validity ExpressionParser::validity(){
     }
     oldToken = current;
 
-    //BUG: It does not accept literals (each language has its own implementation)
+    //FIXME: It does not supports negative constants
+    //NOTE: It does not accept literals (each language has its own implementation)
 
     if (cOperationType == ControlParser::BOOLEAN){
-        for (int i = 2; i < tokens.length(); ++i){
+        for (int i = k; i < tokens.length(); ++i){
             current = tokens[i];
 
             if (hasFinished){
@@ -76,7 +92,9 @@ ExpressionParser::Validity ExpressionParser::validity(){
             switch (current.type()) {
                 case Token::BOOLEAN_OP:
                     if (oldToken.type() == Token::IDENTIFIER
-                            || oldToken.type() == Token::BOOLEAN_VAL)
+                            || oldToken.type() == Token::BOOLEAN_VAL
+                            || oldToken.type() == Token::NUMERIC
+                            || oldToken.type() == Token::PRIORITY_C)
                         oldToken = current;
                     else return INVALID;
                     break;
@@ -101,13 +119,41 @@ ExpressionParser::Validity ExpressionParser::validity(){
                 case Token::NUMERIC:
                 case Token::BOOLEAN_VAL:
                     if (oldToken.type() == Token::BOOLEAN_OP
-                            || oldToken.type() == Token::ASSIGNMENT) oldToken = current;
+                            || oldToken.type() == Token::ASSIGNMENT
+                            || oldToken.type() == Token::PRIORITY_O) oldToken = current;
                     else {
                         MessageLogger::getInstance().log(MessageLogger::E_UNEXPECTED_T_EXP,
                                                          "", 0, current);
                         return INVALID;
                     }
                     break;
+                case Token::PRIORITY_O:
+                    if (oldToken.type() == Token::BOOLEAN_OP
+                            || oldToken.type() == Token::ASSIGNMENT
+                            || oldToken.type() == Token::PRIORITY_O){
+                        oldToken = current;
+                        parenthesesCount++;
+                        break;
+                    }
+                    else {
+                        MessageLogger::getInstance().log(MessageLogger::E_UNEXPECTED_T_EXP,
+                                                         "", 0, current);
+                        return INVALID;
+                    }
+                case Token::PRIORITY_C:
+                    if (oldToken.type() == Token::BOOLEAN_VAL
+                            || oldToken.type() == Token::IDENTIFIER
+                            || oldToken.type() == Token::NUMERIC
+                            || oldToken.type() == Token::PRIORITY_C){
+                        oldToken = current;
+                        parenthesesCount--;
+                        break;
+                    }
+                    else {
+                        MessageLogger::getInstance().log(MessageLogger::E_UNEXPECTED_T_EXP,
+                                                         "", 0, current);
+                        return INVALID;
+                    }
                 case Token::TABULATION:
                     hasFinished = true;
                     break;
@@ -131,15 +177,16 @@ ExpressionParser::Validity ExpressionParser::validity(){
 
             switch (current.type()) {
                 case Token::ARITHMETIC_OP:
-                    if (current.word() == "=") return INVALID;
                     if (oldToken.type() == Token::IDENTIFIER
-                            || oldToken.type() == Token::NUMERIC)
+                            || oldToken.type() == Token::NUMERIC
+                            || oldToken.type() == Token::PRIORITY_C)
                         oldToken = current;
                     else return INVALID;
                     break;
                 case Token::IDENTIFIER:
                     if (oldToken.type() == Token::ARITHMETIC_OP
-                            || oldToken.type() == Token::ASSIGNMENT){
+                            || oldToken.type() == Token::ASSIGNMENT
+                            || oldToken.type() == Token::PRIORITY_O){
                         if (declaredVars.contains(current.word())){
                             if (ControlParser::NUMERIC != declaredVars.value(current.word())){
                                 MessageLogger::getInstance().log(MessageLogger::INFO,
@@ -162,13 +209,45 @@ ExpressionParser::Validity ExpressionParser::validity(){
                     }
                 case Token::NUMERIC:
                     if (oldToken.type() == Token::ARITHMETIC_OP
-                            || oldToken.type() == Token::ASSIGNMENT) oldToken = current;
+                            || oldToken.type() == Token::ASSIGNMENT
+                            || oldToken.type() == Token::PRIORITY_O) oldToken = current;
                     else {
                         MessageLogger::getInstance().log(MessageLogger::E_UNEXPECTED_T_EXP,
                                                          "", 0, current);
                         return INVALID;
                     }
                     break;
+                case Token::PRIORITY_O:
+                    if (oldToken.type() == Token::ARITHMETIC_OP
+                            || oldToken.type() == Token::PRIORITY_O
+                            || oldToken.type() == Token::ASSIGNMENT){
+                        oldToken = current;
+                        parenthesesCount++;
+                        break;
+                    }
+                    else {
+                        MessageLogger::getInstance().log(MessageLogger::E_UNEXPECTED_T_EXP,
+                                                         "", 0, current);
+                        return INVALID;
+                    }
+                case Token::PRIORITY_C:
+                    if (oldToken.type() == Token::NUMERIC
+                            || oldToken.type() == Token::IDENTIFIER
+                            || oldToken.type() == Token::PRIORITY_C){
+                        oldToken = current;
+                        parenthesesCount--;
+                        if(parenthesesCount < 0){
+                            MessageLogger::getInstance().log(MessageLogger::ERROR,
+                                                             QString("Há mais parênteses fechados que abertos em determinada região da expressão."));
+                            return INVALID;
+                        }
+                        break;
+                    }
+                    else {
+                        MessageLogger::getInstance().log(MessageLogger::E_UNEXPECTED_T_EXP,
+                                                         "", 0, current);
+                        return INVALID;
+                    }
                 case Token::TABULATION:
                     hasFinished = true;
                     break;
@@ -240,11 +319,13 @@ ExpressionParser::Validity ExpressionParser::validity(){
         }
     }
 
+    if (parenthesesCount) return INVALID;
     if (invalidSemantic) return INVALID_SEM;
 
     switch (current.type()) {
         case Token::IDENTIFIER:
         case Token::BOOLEAN_VAL:
+        case Token::PRIORITY_C:
         case Token::LITERAL:
         case Token::NUMERIC:
             return canAttribute ? VALID_ATTRIB : VALID_NO_ATTRIB;

@@ -399,6 +399,12 @@ int SyntacticAnalyser::execute(){
                                 currentBlock = block;
                             }
                         }
+                        else if (currentToken.word() == "faça"){
+                            BlockParser *block = new BlockParser(currentBlock, BlockParser::DO_WHILE);
+                            currentBlock->addProgramItem(block);
+                            currentBlock = block;
+                            indentFactor++;
+                        }
                         else if (currentToken.word() == "leia"){
                             if (tabulation != indentFactor){
                                 int ret = MessageLogger::getInstance().log(MessageLogger::W_INDENT_FACTOR,

@@ -1,0 +1,12 @@
+programa Adivinha
+
+	entrada : numérico
+
+	faça
+		escreva "Tente adivinhar o numero (dica: esta entre -1 e 31) : "
+		leia entrada
+	enquanto numero != 7
+	
+	escreva "Boa! Parabéns por adivinhar!"
+	
+fim-programa
