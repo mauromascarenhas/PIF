@@ -1,0 +1,21 @@
+programa ExibindoEntrada
+
+	boolval : booleano
+	numero : numérico
+	palavra : literal
+
+	escreva "Digite uma palavra : "
+	leia palavra
+	
+	escreva "Digite um numero : "
+	leia numero
+	
+	# Cuidado! O tipo de entrada para o valor verdade depende da linguagem
+	# para a qual este código será convertido!
+	
+	escreva "Digite um valor verdade : "
+	leia boolval
+	
+	escreva "Você digitou ( " + palavra + " , " + numero + " , " + boolval + " )"
+	
+fim-programa

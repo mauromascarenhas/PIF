@@ -145,8 +145,7 @@ ExpressionParser::Validity ExpressionParser::validity(){
                 case Token::PRIORITY_O:
                     if (oldToken.type() == Token::BOOLEAN_OP
                             || oldToken.type() == Token::ASSIGNMENT
-                            || oldToken.type() == Token::PRIORITY_O
-                            || oldToken.type() == Token::ARITHMETIC_OP){
+                            || oldToken.type() == Token::PRIORITY_O){
                         oldToken = current;
                         parenthesesCount++;
                         break;
@@ -174,8 +173,8 @@ ExpressionParser::Validity ExpressionParser::validity(){
                     if (oldToken.type() == Token::BOOLEAN_OP
                             || oldToken.type() == Token::ASSIGNMENT
                             || oldToken.type() == Token::PRIORITY_O){
-                        if (oldToken.type() == "+"
-                                || oldToken.type() == "-"){
+                        if (oldToken.word() == "+"
+                                || oldToken.word() == "-"){
                             oldToken = current;
                             break;
                         }
