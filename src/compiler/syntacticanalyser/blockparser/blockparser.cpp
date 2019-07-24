@@ -34,9 +34,9 @@ void BlockParser::toOutFile(int indentFactor, QTextStream &stream, ConvLang conv
             stream << QString("%1do {\n").arg(tabs).toUtf8();
             for (int i = 0; i < programItemsC.size(); ++i)
                 programItemsC[i]->toOutFile(indentFactor, stream, conv);
-            stream << QString("} while (").toUtf8();
+            stream << QString("%1} while (").arg(tabs).toUtf8();
             blockExpression->toOutFile(0, stream, conv);
-            stream << QString(");\n").arg(tabs).toUtf8();
+            stream << QString(");\n").toUtf8();
             break;
         case IF:
             stream << QString("%1if (").arg(tabs).toUtf8();

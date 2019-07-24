@@ -37,6 +37,8 @@ ExpressionParser::Validity ExpressionParser::validity(){
                 cOperationType = declaredVars.value(oldToken.word());
                 break;
             }
+            else MessageLogger::getInstance().log(MessageLogger::E_UNDECLARED_ID,
+                                                  "", 0, oldToken);
         default:
             return INVALID;
     }
@@ -75,7 +77,7 @@ ExpressionParser::Validity ExpressionParser::validity(){
     }
     oldToken = current;
 
-    //FIXME: It does not supports negative constants
+    //FIXME: It does not support negative constants
     //NOTE: It does not accept literals (each language has its own implementation)
 
     if (cOperationType == ControlParser::BOOLEAN){
