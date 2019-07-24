@@ -23,6 +23,13 @@ ExpressionParser::Validity ExpressionParser::validity(){
     Token oldToken = current;
 
     switch (oldToken.type()) {
+        case Token::ARITHMETIC_OP:
+            if (oldToken.word() != "+"
+                    && oldToken.word() != "-")
+                return INVALID;
+            cOperationType = ControlParser::BOOLEAN;
+            canAttribute = false;
+            break;
         case Token::PRIORITY_O:
             parenthesesCount++;
             startedWPrecedence = true;
@@ -68,6 +75,7 @@ ExpressionParser::Validity ExpressionParser::validity(){
             break;
         case Token::IDENTIFIER:
         case Token::NUMERIC:
+            if (oldToken.type() == Token::ARITHMETIC_OP) break;
         case Token::BOOLEAN_VAL:
             if (startedWPrecedence) break;
         case Token::ASSIGNMENT:
@@ -77,8 +85,7 @@ ExpressionParser::Validity ExpressionParser::validity(){
     }
     oldToken = current;
 
-    //FIXME: It does not support negative constants
-    //NOTE: It does not accept literals (each language has its own implementation)
+    //NOTE: It does not accept literals (each language has its own implementation (boolean, only))
 
     if (cOperationType == ControlParser::BOOLEAN){
         for (int i = k; i < tokens.length(); ++i){
@@ -102,7 +109,9 @@ ExpressionParser::Validity ExpressionParser::validity(){
                     break;
                 case Token::IDENTIFIER:
                     if (oldToken.type() == Token::BOOLEAN_OP
-                            || oldToken.type() == Token::ASSIGNMENT){
+                            || oldToken.type() == Token::ASSIGNMENT
+                            || oldToken.type() == Token::PRIORITY_O
+                            || oldToken.type() == Token::ARITHMETIC_OP){
                         if (declaredVars.contains(current.word())){
                             oldToken = current;
                             break;
@@ -119,6 +128,10 @@ ExpressionParser::Validity ExpressionParser::validity(){
                         return INVALID;
                     }
                 case Token::NUMERIC:
+                    if (oldToken.type() == Token::ARITHMETIC_OP){
+                        oldToken = current;
+                        break;
+                    }
                 case Token::BOOLEAN_VAL:
                     if (oldToken.type() == Token::BOOLEAN_OP
                             || oldToken.type() == Token::ASSIGNMENT
@@ -132,7 +145,8 @@ ExpressionParser::Validity ExpressionParser::validity(){
                 case Token::PRIORITY_O:
                     if (oldToken.type() == Token::BOOLEAN_OP
                             || oldToken.type() == Token::ASSIGNMENT
-                            || oldToken.type() == Token::PRIORITY_O){
+                            || oldToken.type() == Token::PRIORITY_O
+                            || oldToken.type() == Token::ARITHMETIC_OP){
                         oldToken = current;
                         parenthesesCount++;
                         break;
@@ -156,7 +170,34 @@ ExpressionParser::Validity ExpressionParser::validity(){
                                                          "", 0, current);
                         return INVALID;
                     }
+                case Token::ARITHMETIC_OP:
+                    if (oldToken.type() == Token::BOOLEAN_OP
+                            || oldToken.type() == Token::ASSIGNMENT
+                            || oldToken.type() == Token::PRIORITY_O){
+                        if (oldToken.type() == "+"
+                                || oldToken.type() == "-"){
+                            oldToken = current;
+                            break;
+                        }
+                        else {
+                            MessageLogger::getInstance().log(MessageLogger::ERROR,
+                                                             QString("Tentativa de operação aritmética em expressão booleana. Token : '%1'.").arg(current.word()));
+                            return INVALID;
+                        }
+                    }
+                    else {
+                        MessageLogger::getInstance().log(MessageLogger::E_UNEXPECTED_T_EXP,
+                                                         "", 0, current);
+                        return INVALID;
+                    }
                 case Token::TABULATION:
+                    if (oldToken.type() == Token::ARITHMETIC_OP
+                            || oldToken.type() == Token::BOOLEAN_OP){
+                        MessageLogger::getInstance().log(MessageLogger::ERROR,
+                                                         QString("Término de expressão booleana com operador. "
+                                                                 "Note que a tabulação durante a expressão não é permitida."));
+                        return INVALID;
+                    }
                     hasFinished = true;
                     break;
                 default:
@@ -181,7 +222,10 @@ ExpressionParser::Validity ExpressionParser::validity(){
                 case Token::ARITHMETIC_OP:
                     if (oldToken.type() == Token::IDENTIFIER
                             || oldToken.type() == Token::NUMERIC
-                            || oldToken.type() == Token::PRIORITY_C)
+                            || oldToken.type() == Token::PRIORITY_C
+                            || ((oldToken.type() == Token::PRIORITY_O
+                                    || oldToken.type() == Token::ASSIGNMENT)
+                                    && (current.word() == "+" || current.word() == "-")))
                         oldToken = current;
                     else return INVALID;
                     break;
@@ -251,6 +295,12 @@ ExpressionParser::Validity ExpressionParser::validity(){
                         return INVALID;
                     }
                 case Token::TABULATION:
+                    if (oldToken.type() == Token::ARITHMETIC_OP){
+                        MessageLogger::getInstance().log(MessageLogger::ERROR,
+                                                         QString("Término de expressão aritmética com operador. "
+                                                                 "Note que a tabulação durante a expressão não é permitida."));
+                        return INVALID;
+                    }
                     hasFinished = true;
                     break;
                 default:
@@ -311,6 +361,12 @@ ExpressionParser::Validity ExpressionParser::validity(){
                     }
                     break;
                 case Token::TABULATION:
+                    if (oldToken.type() == Token::ARITHMETIC_OP){
+                        MessageLogger::getInstance().log(MessageLogger::ERROR,
+                                                         QString("Término de expressão literal com operador. "
+                                                                 "Note que a tabulação durante a expressão não é permitida."));
+                        return INVALID;
+                    }
                     hasFinished = true;
                     break;
                 default:
@@ -330,6 +386,7 @@ ExpressionParser::Validity ExpressionParser::validity(){
         case Token::PRIORITY_C:
         case Token::LITERAL:
         case Token::NUMERIC:
+        case Token::TABULATION:
             return canAttribute ? VALID_ATTRIB : VALID_NO_ATTRIB;
         default:
             return INVALID;

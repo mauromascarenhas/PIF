@@ -1,0 +1,57 @@
+programa RaizQuadrada
+
+	a, b, c, delta, raizDelta, x1, x2 : numérico
+	
+	escreva "Digite o valor de a, b e c, respectivamente : "
+	leia a, b, c
+	
+	delta = (b * b) - (4 * a * c)
+	
+	se delta < 0 então
+	
+		escreva "O delta eh negativo. Nao existe raiz real."
+		
+	senão se delta == 0 então
+	
+		x1 = -b / ( 2 * a )
+		escreva "O valor de x1 e x2 eh : " + x1
+		
+	senão
+		
+		rQuadrado : numérico
+		
+		se delta > 1 então
+		
+			# Calcula a raíz  quadrada com precisão na terceira casa decimal
+			# Para aumentar a precisão, basta reduzir o incremento
+			
+			raizDelta = 1
+			rQuadrado = 1
+			enquanto rQuadrado < delta faça
+				raizDelta = raizDelta + 0.01
+				rQuadrado = raizDelta * raizDelta
+			fim-enquanto
+		
+		senão
+		
+			# Calcula a raíz quadrada com precisão na terceira casa decimal
+			# Para aumentar a precisão, basta reduzir o decremento
+		
+			raizDelta = 1
+			rQuadrado = 1
+			enquanto rQuadrado > delta faça
+				raizDelta = raizDelta - 0.01
+				rQuadrado = raizDelta * raizDelta
+			fim-enquanto			
+			
+		fim-se
+		
+		x1 = ( -b + raizDelta ) / ( 2 * a )
+		x2 = ( -b - raizDelta ) / ( 2 * a )
+		
+		escreva "O valor de x1 eh : " + x1
+		escreva "O valor de x2 eh : " + x2
+	
+	fim-se
+	
+fim-programa

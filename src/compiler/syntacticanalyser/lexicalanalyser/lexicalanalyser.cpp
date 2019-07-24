@@ -9,7 +9,7 @@ LexicalAnalyser::LexicalAnalyser(const QString &line) :
                       "|((verdadeiro|falso)\\b)|([\\+\\-\\*\\/])|(\\=)"
                       "|(\\()|(\\))"
                       "|(\"(?:[^\"\\\\]++|\\\\.)*+\")"
-                      "|(\\\\)|([^\\s\\1])")
+                      "|(#)|([^\\s\\1])")
 {
     this->count = 0;
     this->line = line;

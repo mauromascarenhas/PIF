@@ -1,0 +1,22 @@
+programa Potencia
+
+	resultado, base, expoente : numérico
+
+	escreva "Digite a base : "
+	leia base
+		
+	faça 
+		escreva "Digite o expoente (maior  ou igual a zero) : "
+		leia expoente
+	enquanto expoente < 0
+	
+	resultado = 1
+	
+	enquanto expoente > 0 faça
+		resultado = resultado * base
+		expoente = expoente - 1
+	fim-enquanto
+	
+	escreva "O resultado da potencia eh : " + resultado
+	
+fim-programa

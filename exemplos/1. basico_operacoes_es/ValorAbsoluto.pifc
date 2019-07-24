@@ -1,0 +1,14 @@
+programa ValorAbsoluto
+
+	valor : numérico
+	
+	escreva "Digite qualquer valor : "
+	leia valor
+	
+	se valor < 0 então
+		valor = -valor
+	fim-se
+	
+	escreva "O valor absoluto eh : " + valor
+	
+fim-programa
