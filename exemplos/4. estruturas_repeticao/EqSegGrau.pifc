@@ -1,4 +1,4 @@
-programa RaizQuadrada
+programa EqSegGrau
 
 	a, b, c, delta, raizDelta, x1, x2 : numérico
 	
