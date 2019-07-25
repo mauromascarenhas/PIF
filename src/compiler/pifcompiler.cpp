@@ -10,9 +10,6 @@ PIFCompiler::~PIFCompiler(){
 }
 
 void PIFCompiler::execute(){
-    qInfo() << "Parameters : " << arguments;
-    qInfo() << "\n-----------------------";
-
     bool hasValidArgs = true;
     bool overwriteFile = false;
     MessageLogger::CriticalMode criticalMode = MessageLogger::WARNING_L;
@@ -52,7 +49,7 @@ void PIFCompiler::execute(){
     }
 
     if (hasFileName && hasValidArgs){
-        qInfo() << "  Settings\n";
+        qInfo() << "\n-----------------------";
         qInfo() << "* In file : " << fileName;
         qInfo() << "* Out file : " << outFileName;
         qInfo() << "* Convert op : " << operation;
@@ -66,5 +63,9 @@ void PIFCompiler::execute(){
         QCoreApplication::exit(sintacticAnalyser.execute());
     }
     else if (!hasFileName) QCoreApplication::exit(MessageLogger::getInstance().log(MessageLogger::E_NO_FILE));
-    else QCoreApplication::exit(MessageLogger::getInstance().log(MessageLogger::E_INVALID_ARGS));
+    else{
+        qInfo() << "Arguments : " << arguments;
+        qInfo() << "\n-----------------------";
+        QCoreApplication::exit(MessageLogger::getInstance().log(MessageLogger::E_INVALID_ARGS));
+    }
 }

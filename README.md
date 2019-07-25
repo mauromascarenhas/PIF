@@ -107,4 +107,8 @@ Pronto! Assim que terminar você poderá rodar o executável conforme a [documen
 
 # Licença
 
-Todo o desenvolvimento da linguagem de programação PIFC encontra-se sob a licença de código aberto [LGPL V3](./LICENCE) cuja cópia encontra-se disponível na raíz deste repositório.
+Todo o desenvolvimento da linguagem de programação PIFC encontra-se sob a licença de código aberto [LGPL V3](./LICENCE) cuja cópia encontra-se disponível na raíz deste repositório. Já a documentação encontra-se sob a Licença Creative Commons Attribution-Share Alike 4.0 International (CC-BY-SA).
+
+<p align="center">
+	<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Licença Creative Commons" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br />Este trabalho está licenciado com uma Licença <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons - Atribuição-CompartilhaIgual 4.0 Internacional</a>.
+</p>

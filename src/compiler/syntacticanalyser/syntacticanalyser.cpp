@@ -28,9 +28,7 @@ int SyntacticAnalyser::execute(){
         while(!stream.atEnd() && !programStarted){
             lineCounter++;
             QString line = stream.readLine();
-            qInfo() << "Line : " << line;
             LexicalAnalyser lLine(line);
-            qInfo() << "Token count : " << lLine.tokenCount();
 
             int tabulation, i;
             Token currentToken;
@@ -83,8 +81,6 @@ int SyntacticAnalyser::execute(){
                                     currentToken);
                 }
             }
-
-            qDebug() << "Indent factor : " << indentFactor << "\n";
         }
 
         if (stream.atEnd() && !programStarted)
@@ -93,9 +89,7 @@ int SyntacticAnalyser::execute(){
         while(!stream.atEnd() && !programFinished){
             lineCounter++;
             QString line = stream.readLine();
-            qInfo() << "Line : " << line;
             LexicalAnalyser lLine(line);
-            qInfo() << "Token count : " << lLine.tokenCount() << "\n";
 
             int tabulation, i;
             Token currentToken;
@@ -453,9 +447,7 @@ int SyntacticAnalyser::execute(){
         while(!stream.atEnd()){
             lineCounter++;
             QString line = stream.readLine();
-            qInfo() << "Line : " << line;
             LexicalAnalyser lLine(line);
-            qInfo() << "Token count : " << lLine.tokenCount() << "\n";
 
             //Detects invalid tokens
             while(lLine.hasNextToken()){
