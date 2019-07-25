@@ -7,7 +7,7 @@ A seguir, um breve sumário da documentação da linguagem de programação PIF,
 
 # Documentação do compilador
 
-Para compilar o código, basta baixar o compilador ou compilá-lo através do código fonte e seguir as instruções conforme indicado na [documentação do compilador](./docs/compiler/README.md).
+Para compilar o código, basta baixar o compilador ou compilá-lo através do código fonte e seguir as instruções conforme indicado na [documentação do compilador](./compiler/README.md).
 
 # Licença
 
