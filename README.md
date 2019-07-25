@@ -15,9 +15,9 @@ Esta linguagem é extremamente simples e amigável para programadores iniciantes
 
 Também há alguns exemplos do que não deve ser feito (alguns programas podem nem chegar a compilar)
 
-1. [Exemplos básicos entrada e saída de dados](./exemplos/0.%20erros/)
+1. [Exemplos de código incorreto](./exemplos/0.%20erros/)
 
-# Compilando o código (<programa>.pifc)
+# Compilando o código ({programa}.pifc)
 
 Para compilar o código, basta baixar o compilador ou compilá-lo através do código fonte e seguir as instruções conforme indicado na [documentação do compilador](./docs/compiler/README.md).
 
