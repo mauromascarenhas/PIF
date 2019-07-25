@@ -1,0 +1,34 @@
+# Este programa calcula a raiz quadrada de um dado número
+# através do método iterativo de Newton, que consiste em
+# calcular x tal que x_(i) = x_(i-1) - f(x_(i))/f'(x_(i))
+# e só para quando a precisão é acertada, isto é, quando
+# x_(i) - x_(i-1) <= epslon, onde epslon é a precisão
+# No caso da raíz quadrada, f(n) = x^2 - n
+# logo, f'(n) = 2x
+
+programa RaizQuadrada
+
+	epslon, numero, x, x0, diferenca: numérico
+
+	escreva "O numero que deseja calcular a raiz quadrada : "
+	leia numero
+	
+	escreva "Digite a precisao do calculo : "
+	leia epslon
+	
+	x0 = 10
+	
+	faça
+		x = x0 - (x0 * x0 - numero)/(2 * x0)
+		diferenca = x - x0
+		
+		se diferenca < 0 então
+			diferenca = - diferenca
+		fim-se
+		
+		x0 = x
+	enquanto diferenca > epslon
+	
+	escreva "A raiz do numero " + numero + " eh : " + x
+	
+fim-programa

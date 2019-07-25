@@ -28,7 +28,7 @@ programa EqSegGrau
 			raizDelta = 1
 			rQuadrado = 1
 			enquanto rQuadrado < delta faça
-				raizDelta = raizDelta + 0.01
+				raizDelta = raizDelta + 0.001
 				rQuadrado = raizDelta * raizDelta
 			fim-enquanto
 		
@@ -40,7 +40,7 @@ programa EqSegGrau
 			raizDelta = 1
 			rQuadrado = 1
 			enquanto rQuadrado > delta faça
-				raizDelta = raizDelta - 0.01
+				raizDelta = raizDelta - 0.001
 				rQuadrado = raizDelta * raizDelta
 			fim-enquanto			
 			
