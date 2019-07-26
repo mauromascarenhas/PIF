@@ -1,0 +1,16 @@
+programa TabelaVerdade
+
+	a, b, e_op, ou_op, xor_op : booleano
+	
+	escreva "Digite dois valores verdade : "
+	leia a, b
+	
+	e_op = a e b
+	ou_op = a ou b
+	xor_op = (a != b)
+	
+	escreva "Resultado da operacao e : " + e_op
+	escreva "Resultado da operacao ou : " + ou_op
+	escreva "Resultado da operacao xor (ou exclusivo) : " + xor_op
+	
+fim-programa
