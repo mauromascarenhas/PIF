@@ -1,9 +1,18 @@
-# Documntação PIF
+# Documentação PIF
 
 A seguir, um breve sumário da documentação da linguagem de programação PIF, bem como de suas ferramentas.
 
 # Documentação da linguagem
 
+A documentação completa da linguagem pode ser encontrada no diretório ["~/docs/linguagem"](./linguagem/README.md), mas é possível acessar a documentação de alguns recursos através do breve índice a seguir (não se esqueça que você também pode contar com os exemplos de implementação contidos no diretório ["exemplos"](../exemplos/), disponível na [raíz do repositório](../))
+
+## Breve índice de introdução à linguagem
+
+1. [Índice geral.](./linguagem/README.md)
+1. [Entrada e saída de dados.](./linguagem/operacoes_es.md)
+1. [Operações com o tipo literal.](./linguagem/operacoes_literal.md)
+1. [Estruturas condicionais.](./linguagem/condicionais.md)
+1. [Estruturas de repetição.](./linguagem/repeticao.md)
 
 # Documentação do compilador
 
