@@ -1,5 +1,27 @@
 # Índice geral de introdução à linguagem PIF
 
+## Estrutura geral do programa
+
+O menor programa possível de se escrever em PIF é o seguinte:
+
+```
+	programa
+	
+	fim-programa
+```
+
+Embora ele não faça praticamente nada (não tem qualquer utilidade), é importante notar que ele é a estrutura básica para qualquer outro programa escrito em PIF. **OBS.:** Este programa não pode ser traduzido para Java, já que não foi dado nome a ele.
+
+A seguir, há uma generalização um pouco melhor do esqueleto de um programa escrito em PIF
+
+```
+	programa <nome_do_programa>
+		<comandos_em_geral>
+	fim-programa
+```
+
+Onde `<nome_do_programa>` é um parâmetro opicional (apenas se você for traduzir o programa para C ou C++, para Java é obrigatório), mas de muita utilidade (ajuda a identificar o problema que o programa se propõe a resolver). Já o parâmetro `<comandos_em_geral>` são as linhas de comando que o programa deve executar.
+
 ## Comentários
 
 Para inserir comentários, basta utilizar o caractere `#`, que todo o conteúdo digitado após ele será desconsiderado no momento da compilação.
