@@ -35,6 +35,12 @@ Ex.:
 	leia nome # Esta linha lê o nome do usuário (e isto é um comentário)
 ```
 
+## Indentação
+
+Ao programar em PIF, a elegância do código é uma característica praticamente obrigatória. Sendo assim, a cada linha com indentação incorreta, será exebita uma mensagem de aviso no momento da conversão (mas o código gerado na saída já estará corrigido).
+
+A indentação poderá ser feita utilizando o caractere de tabulação (i.e, `\t`) ou 4 caracteres de espaço consecutivos.
+
 ## Entrada e saída de dados
 
 ### Entrada

@@ -6,6 +6,17 @@ Repositório de desenvolvimento da linguagem de programação PIF
 
 Esta linguagem é extremamente simples e amigável para programadores iniciantes, contando com diversos exemplos e documentação completa a respeito do uso e das regras.
 
+## Documentação
+
+A documentação da linguagem contém a explicação de como um programa escrito em PIF deve ser escrito:
+
+1. [Início.](./docs/README.md)
+1. [Índice geral.](./docs/linguagem/README.md)
+1. [Entrada e saída de dados.](./docs/linguagem/operacoes_es.md)
+1. [Operações com o tipo literal.](./docs/linguagem/operacoes_literal.md)
+1. [Estruturas condicionais.](./docs/linguagem/condicionais.md)
+1. [Estruturas de repetição.](./docs/linguagem/repeticao.md)
+
 ## Exemplos
 
 1. [Exemplos básicos entrada e saída de dados](./exemplos/1.%20basico_operacoes_es/)
