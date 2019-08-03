@@ -1,12 +1,12 @@
 #include "lexicalanalyser.h"
 
 LexicalAnalyser::LexicalAnalyser(const QString &line) :
-    LANGUAGE_TEMPLATE("((\\b\\d+(?:\\.\\d+)?)"
-                      "|((numérico|literal|booleano|programa|senão|se|então|fim-se|faça|enquanto|fim-enquanto|fim-programa|leia|escreva)\\b)"
+    LANGUAGE_TEMPLATE("((\\b\\d+(?:\\.\\d+)?\\b)"
+                      "|(\\b(numérico|literal|booleano|programa|senão|se|então|fim-se|faça|enquanto|fim-enquanto|fim-programa|leia|escreva)\\b)"
                       "|(\\t| {4}))|([:,])"
                       "|((\\<\\=|\\>\\=|\\<|\\>|\\!\\=|\\=\\=|\\!)|(e|ou)\\b)"
-                      "|((verdadeiro|falso)\\b)|([\\+\\-\\*\\/])|(\\=)"
-                      "|([a-zA-Z][\\w]*\\b)"
+                      "|(\\b(verdadeiro|falso)\\b)|([\\+\\-\\*\\/])|(\\=)"
+                      "|(\\b[a-zA-Z][\\w]*\\b)"
                       "|(\\()|(\\))"
                       "|(\"(?:[^\"\\\\]++|\\\\.)*+\")"
                       "|(#)|([^\\s\\1])")
