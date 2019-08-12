@@ -1,8 +1,8 @@
 #ifndef MESSAGELOGGER_H
 #define MESSAGELOGGER_H
 
-#include <QDebug>
 #include <QString>
+#include <QTextStream>
 #include <QCoreApplication>
 
 #include "syntacticanalyser/lexicalanalyser/token.h"
@@ -58,6 +58,9 @@ private:
     static MessageLogger *current;
 
     const CriticalMode CMODE;
+
+    QTextStream output;
+    QTextStream errOutput;
 };
 
 #endif // MESSAGELOGGER_H

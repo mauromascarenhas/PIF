@@ -24,6 +24,7 @@ private:
     int argCount;
 
     QFile currentFile;
+    QTextStream output;
 
     QString fileName;
     QString outFileName;

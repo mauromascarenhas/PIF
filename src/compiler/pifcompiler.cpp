@@ -1,9 +1,15 @@
 #include "pifcompiler.h"
 
-PIFCompiler::PIFCompiler(QObject *parent) : QObject(parent)
+PIFCompiler::PIFCompiler(QObject *parent) : QObject(parent),
+    output(stdout, QIODevice::Unbuffered | QIODevice::ReadWrite | QIODevice::Text)
 {
+    setbuf(stdout, NULL);
+
     arguments = QCoreApplication::arguments();
     argCount = arguments.size();
+
+    output.setGenerateByteOrderMark(true);
+    output.setCodec("UTF-8"); //ISO 8859-1
 }
 
 PIFCompiler::~PIFCompiler(){
@@ -49,13 +55,13 @@ void PIFCompiler::execute(){
     }
 
     if (hasFileName && hasValidArgs){
-        qInfo() << "\n-----------------------";
-        qInfo() << "* In file : " << fileName;
-        qInfo() << "* Out file : " << outFileName;
-        qInfo() << "* Convert op : " << operation;
-        qInfo() << "* Critical mode : " << criticalMode;
-        qInfo() << "* Overwrite : " << criticalMode;
-        qInfo() << "-----------------------\n";
+        output << QString("\n-----------------------").toUtf8() << endl;
+        output << QString("* Arquivo de entrada : ").toUtf8() << fileName.toUtf8() << endl;
+        output << QString("* Arquivo de saída : ").toUtf8() << outFileName.toUtf8() << endl;
+        output << QString("* Operação de conversão : ").toUtf8() << operation << endl;
+        output << QString("* Modo crítico : ").toUtf8() << criticalMode << endl;
+        output << QString("* Sobrescrever : ").toUtf8() << criticalMode << endl;
+        output << QString("-----------------------\n").toUtf8() << endl;
 
         MessageLogger::getInstance(criticalMode);
 
@@ -64,8 +70,10 @@ void PIFCompiler::execute(){
     }
     else if (!hasFileName) QCoreApplication::exit(MessageLogger::getInstance().log(MessageLogger::E_NO_FILE));
     else{
-        qInfo() << "Arguments : " << arguments;
-        qInfo() << "\n-----------------------";
+        output << QString("Argumentos : ").toUtf8();
+        for (int i = 0; i < arguments.length(); ++i)
+             output << arguments[i].toUtf8() << QString(i == arguments.length() - 1 ? "\n" : ", ").toUtf8();
+        output << QString("\n-----------------------").toUtf8() << endl;
         QCoreApplication::exit(MessageLogger::getInstance().log(MessageLogger::E_INVALID_ARGS));
     }
 }

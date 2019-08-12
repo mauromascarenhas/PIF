@@ -2,9 +2,14 @@
 
 MessageLogger* MessageLogger::current = nullptr;
 
-MessageLogger::MessageLogger(CriticalMode mode) : CMODE(mode)
+MessageLogger::MessageLogger(CriticalMode mode) : CMODE(mode),
+    errOutput(stderr, QIODevice::Unbuffered | QIODevice::ReadWrite), output(stdout, QIODevice::Unbuffered | QIODevice::ReadWrite)
 {
+    output.setCodec("UTF-8"); //ISO 8859-1
+    errOutput.setCodec("UTF-8"); //ISO 8859-1
 
+    output.setGenerateByteOrderMark(true);
+    errOutput.setGenerateByteOrderMark(true);
 }
 
 MessageLogger::~MessageLogger(){
@@ -26,13 +31,13 @@ void MessageLogger::clearInstance(){
 void MessageLogger::log(MessageType type, const QString &message){
     switch (type) {
         case ERROR:
-            qCritical() << "[ ERRO ] " << message;
+            errOutput << "[ ERRO ] " << message.toUtf8() << endl;
             break;
         case INFO:
-            qInfo() << "[ INFO ] " << message;
+            output << "[ INFO ] " << message.toUtf8() << endl;
             break;
         default:
-            qWarning() << "[ AVISO ] " << message;
+            output << "[ AVISO ] " << message.toUtf8() << endl;
             break;
     }
 }
@@ -107,7 +112,7 @@ int MessageLogger::log(LogType type, const QString &appendMsg,
                 break;
         }
 
-        qCritical() << logMessage;
+        errOutput << logMessage.toUtf8() << endl;
         return returnVal;
     }
     else if (type < SUCCESS){
@@ -121,12 +126,12 @@ int MessageLogger::log(LogType type, const QString &appendMsg,
                 break;
         }
 
-        qWarning() << logMessage;
+        output << logMessage.toUtf8() << endl;
         if (CMODE == CRITICAL_Q) return -2;
         return 0;
     }
     else {
-        qInfo() << "Compilado com sucesso!";
+        output << QString("Compilado com sucesso!").toUtf8() << endl;
         return 0;
     }
 }

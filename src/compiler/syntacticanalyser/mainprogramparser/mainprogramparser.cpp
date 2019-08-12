@@ -38,7 +38,8 @@ void MainProgramParser::toOutFileC(int indentFactor, QTextStream &stream){
                       "%1typedef int bool;\n"
                       "%1enum {false, true};\n"
                       "\n"
-                      "%1int main(int argc, char *argv[]){\n").arg(tabs).toUtf8();
+                      "%1int main(int argc, char *argv[]){\n"
+                      "%1\tsetbuf(stdout, NULL);\n\n").arg(tabs).toUtf8();
 
     for (int i = 0; i < programItemsC.size(); ++i)
         programItemsC[i]->toOutFile(indentFactor, stream);
@@ -63,7 +64,8 @@ void MainProgramParser::toOutFileCPP(int indentFactor, QTextStream &stream){
                       "\n"
                       "%1stringstream __sstrm__;\n"
                       "\n"
-                      "%1int main(int argc, char *argv[]){\n").arg(tabs).toUtf8();
+                      "%1int main(int argc, char *argv[]){\n"
+                      "%1\tsetbuf(stdout, NULL);\n\n").arg(tabs).toUtf8();
 
     for (int i = 0; i < programItemsC.size(); ++i)
         programItemsC[i]->toOutFile(indentFactor, stream, ProgramItem::CPP);
