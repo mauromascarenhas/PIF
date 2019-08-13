@@ -3,13 +3,13 @@
 LexicalAnalyser::LexicalAnalyser(const QString &line) :
     LANGUAGE_TEMPLATE("((\\b\\d+(?:\\.\\d+)?\\b)"
                       "|(\\b(numérico|literal|booleano|programa|senão|se|então|fim-se|faça|enquanto|fim-enquanto|fim-programa|leia|escreva)\\b)"
-                      "|(\\t| {4}))|([:,])"
-                      "|((\\<\\=|\\>\\=|\\<|\\>|\\!\\=|\\=\\=|\\!)|(e|ou)\\b)"
+                      "|(\\t| {4})|([:,])"
+                      "|((\\<\\=|\\>\\=|\\<|\\>|\\!\\=|\\=\\=|\\!)|\\b(e|ou)\\b)"
                       "|(\\b(verdadeiro|falso)\\b)|([\\+\\-\\*\\/])|(\\=)"
                       "|(\\b[a-zA-Z][\\w]*\\b)"
                       "|(\\()|(\\))"
                       "|(\"(?:[^\"\\\\]++|\\\\.)*+\")"
-                      "|(#)|([^\\s\\1])")
+                      "|(#))|([^\\s\\1])")
 {
     this->count = 0;
     this->line = line;
@@ -38,7 +38,7 @@ void LexicalAnalyser::getMatches(){
         else if (!match.captured(5).isEmpty()) tokens.append(Token(match.captured(5), Token::TABULATION, match.capturedStart(5)));
         else if (!match.captured(6).isEmpty()) tokens.append(Token(match.captured(6), Token::CONTROL, match.capturedStart(6)));
         else if (!match.captured(7).isEmpty()) tokens.append(Token(match.captured(7), Token::BOOLEAN_OP, match.capturedStart(7)));
-        else if (!match.captured(8).isEmpty()) tokens.append(Token(match.captured(8), Token::BOOLEAN_VAL, match.capturedStart(8)));
+        else if (!match.captured(10).isEmpty()) tokens.append(Token(match.captured(10), Token::BOOLEAN_VAL, match.capturedStart(10)));
         else if (!match.captured(12).isEmpty()) tokens.append(Token(match.captured(12), Token::ARITHMETIC_OP, match.capturedStart(12)));
         else if (!match.captured(13).isEmpty()) tokens.append(Token(match.captured(13), Token::ASSIGNMENT, match.capturedStart(13)));
         else if (!match.captured(14).isEmpty()) tokens.append(Token(match.captured(14), Token::IDENTIFIER, match.capturedStart(14)));

@@ -33,7 +33,6 @@ ExpressionParser::Validity ExpressionParser::validity(){
         case Token::PRIORITY_O:
             parenthesesCount++;
             startedWPrecedence = true;
-        case Token::LITERAL:
         case Token::NUMERIC:
         case Token::BOOLEAN_VAL:
             cOperationType = ControlParser::BOOLEAN;
@@ -418,6 +417,9 @@ void ExpressionParser::toOutFileC(int indentFactor, QTextStream &stream){
                     for (int i = 0; i < tokens.size(); ++i){
                         QString concat = i == tokens.size() - 1 ? "" : " ";
                         switch (tokens[i].type()) {
+                            case Token::BOOLEAN_VAL:
+                                stream << QString("%1%2").arg(tokens[i].word() == "verdadeiro" ? "true" : "false", concat).toUtf8();
+                                break;
                             case Token::BOOLEAN_OP:
                                 if (tokens[i].word() == "e") stream << QString("%1%2").arg("&&", concat).toUtf8();
                                 else if (tokens[i].word() == "ou") stream << QString("%1%2").arg("||", concat).toUtf8();
@@ -489,6 +491,9 @@ void ExpressionParser::toOutFileC(int indentFactor, QTextStream &stream){
             for (int i = 0; i < tokens.size(); ++i){
                 QString concat = i == tokens.size() - 1 ? "" : " ";
                 switch (tokens[i].type()) {
+                    case Token::BOOLEAN_VAL:
+                        stream << QString("%1%2").arg(tokens[i].word() == "verdadeiro" ? "true" : "false", concat).toUtf8();
+                        break;
                     case Token::BOOLEAN_OP:
                         if (tokens[i].word() == "e") stream << QString("%1%2").arg("&&", concat).toUtf8();
                         else if (tokens[i].word() == "ou") stream << QString("%1%2").arg("||", concat).toUtf8();
@@ -517,6 +522,9 @@ void ExpressionParser::toOutFileCPP(int indentFactor, QTextStream &stream){
                     for (int i = 0; i < tokens.size(); ++i){
                         QString concat = i == tokens.size() - 1 ? "" : " ";
                         switch (tokens[i].type()) {
+                            case Token::BOOLEAN_VAL:
+                                stream << QString("%1%2").arg(tokens[i].word() == "verdadeiro" ? "true" : "false", concat).toUtf8();
+                                break;
                             case Token::BOOLEAN_OP:
                                 if (tokens[i].word() == "e") stream << QString("%1%2").arg("&&", concat).toUtf8();
                                 else if (tokens[i].word() == "ou") stream << QString("%1%2").arg("||", concat).toUtf8();
@@ -561,6 +569,9 @@ void ExpressionParser::toOutFileCPP(int indentFactor, QTextStream &stream){
             for (int i = 0; i < tokens.size(); ++i){
                 QString concat = i == tokens.size() - 1 ? "" : " ";
                 switch (tokens[i].type()) {
+                    case Token::BOOLEAN_VAL:
+                        stream << QString("%1%2").arg(tokens[i].word() == "verdadeiro" ? "true" : "false", concat).toUtf8();
+                        break;
                     case Token::BOOLEAN_OP:
                         if (tokens[i].word() == "e") stream << QString("%1%2").arg("&&", concat).toUtf8();
                         else if (tokens[i].word() == "ou") stream << QString("%1%2").arg("||", concat).toUtf8();
@@ -589,6 +600,9 @@ void ExpressionParser::toOutFileJAVA(int indentFactor, QTextStream &stream){
                     for (int i = 0; i < tokens.size(); ++i){
                         QString concat = i == tokens.size() - 1 ? "" : " ";
                         switch (tokens[i].type()) {
+                            case Token::BOOLEAN_VAL:
+                                stream << QString("%1%2").arg(tokens[i].word() == "verdadeiro" ? "true" : "false", concat).toUtf8();
+                                break;
                             case Token::BOOLEAN_OP:
                                 if (tokens[i].word() == "e") stream << QString("%1%2").arg("&&", concat).toUtf8();
                                 else if (tokens[i].word() == "ou") stream << QString("%1%2").arg("||", concat).toUtf8();
@@ -650,6 +664,9 @@ void ExpressionParser::toOutFileJAVA(int indentFactor, QTextStream &stream){
             for (int i = 0; i < tokens.size(); ++i){
                 QString concat = i == tokens.size() - 1 ? "" : " ";
                 switch (tokens[i].type()) {
+                    case Token::BOOLEAN_VAL:
+                        stream << QString("%1%2").arg(tokens[i].word() == "verdadeiro" ? "true" : "false", concat).toUtf8();
+                        break;
                     case Token::BOOLEAN_OP:
                         if (tokens[i].word() == "e") stream << QString("%1%2").arg("&&", concat).toUtf8();
                         else if (tokens[i].word() == "ou") stream << QString("%1%2").arg("||", concat).toUtf8();
