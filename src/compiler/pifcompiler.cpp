@@ -3,8 +3,6 @@
 PIFCompiler::PIFCompiler(QObject *parent) : QObject(parent),
     output(stdout, QIODevice::Unbuffered | QIODevice::ReadWrite | QIODevice::Text)
 {
-    setbuf(stdout, NULL);
-
     arguments = QCoreApplication::arguments();
     argCount = arguments.size();
 
@@ -60,7 +58,7 @@ void PIFCompiler::execute(){
         output << QString("* Arquivo de saída : ").toUtf8() << outFileName.toUtf8() << endl;
         output << QString("* Operação de conversão : ").toUtf8() << operation << endl;
         output << QString("* Modo crítico : ").toUtf8() << criticalMode << endl;
-        output << QString("* Sobrescrever : ").toUtf8() << criticalMode << endl;
+        output << QString("* Sobrescrever : ").toUtf8() << overwriteFile << endl;
         output << QString("-----------------------\n").toUtf8() << endl;
 
         MessageLogger::getInstance(criticalMode);
