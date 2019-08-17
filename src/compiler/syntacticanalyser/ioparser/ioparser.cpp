@@ -238,13 +238,13 @@ void IOParser::toOutFileJAVA(int indentFactor, QTextStream &stream){
         for (int i = 0; i < arguments.size(); ++i){
             switch (globalVars.value(arguments[i].word())) {
                 case ControlParser::BOOLEAN:
-                    stream << QString("%1%2 = scanner.nextBoolean();\n").arg(tabs, arguments[i].word()).toUtf8();
+                    stream << QString("%1%2 = _____scanner_____.nextBoolean();\n").arg(tabs, arguments[i].word()).toUtf8();
                     break;
                 case ControlParser::NUMERIC:
-                    stream << QString("%1%2 = scanner.nextDouble();\n").arg(tabs, arguments[i].word()).toUtf8();
+                    stream << QString("%1%2 = _____scanner_____.nextDouble();\n").arg(tabs, arguments[i].word()).toUtf8();
                     break;
                 default:
-                    stream << QString("%1%2 = scanner.next();\n").arg(tabs, arguments[i].word()).toUtf8();
+                    stream << QString("%1%2 = _____scanner_____.next();\n").arg(tabs, arguments[i].word()).toUtf8();
                     break;
             }
         }
