@@ -35,6 +35,7 @@ SOURCES += \
         main.cpp \
         messagelogger/messagelogger.cpp \
         pifcompiler.cpp \
+        syntacticanalyser/blankitem/blankitem.cpp \
         syntacticanalyser/blockparser/blockparser.cpp \
         syntacticanalyser/controlparser/controlparser.cpp \
         syntacticanalyser/expresionparser/expressionparser.cpp \
@@ -53,6 +54,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     messagelogger/messagelogger.h \
     pifcompiler.h \
+    syntacticanalyser/blankitem/blankitem.h \
     syntacticanalyser/blockparser/blockparser.h \
     syntacticanalyser/controlparser/controlparser.h \
     syntacticanalyser/expresionparser/expressionparser.h \

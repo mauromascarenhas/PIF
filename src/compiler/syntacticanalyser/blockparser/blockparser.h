@@ -5,6 +5,7 @@
 #include <QHash>
 
 #include "../programitem.h"
+#include "../blankitem/blankitem.h"
 #include "../controlparser/controlparser.h"
 #include "../expresionparser/expressionparser.h"
 

@@ -44,7 +44,8 @@ void MainProgramParser::toOutFileC(int indentFactor, QTextStream &stream){
     for (int i = 0; i < programItemsC.size(); ++i)
         programItemsC[i]->toOutFile(indentFactor, stream);
 
-    stream << QString("%1\treturn EXIT_SUCCESS;\n"
+    stream << QString("%1\n"
+                      "%1\treturn EXIT_SUCCESS;\n"
                       "%1}\n").arg(tabs).toUtf8();
 
 }
@@ -70,7 +71,8 @@ void MainProgramParser::toOutFileCPP(int indentFactor, QTextStream &stream){
     for (int i = 0; i < programItemsC.size(); ++i)
         programItemsC[i]->toOutFile(indentFactor, stream, ProgramItem::CPP);
 
-    stream << QString("%1\treturn EXIT_SUCCESS;\n"
+    stream << QString("%1\n"
+                      "%1\treturn EXIT_SUCCESS;\n"
                       "%1}\n").arg(tabs).toUtf8();
 }
 
@@ -85,7 +87,7 @@ void MainProgramParser::toOutFileJAVA(int indentFactor, QTextStream &stream){
                       "%1public class %2 {\n"
                       "\n"
                       "%1\tpublic static void main(String[] args) {\n"
-                      "%1\t\tScanner scanner = new Scanner(System.in);"
+                      "%1\t\tScanner scanner = new Scanner(System.in);\n"
                       "\n").arg(tabs, PROGRAM_NAME).toUtf8();
 
     for (int i = 0; i < programItemsC.size(); ++i)

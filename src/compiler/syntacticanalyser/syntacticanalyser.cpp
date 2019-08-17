@@ -86,6 +86,7 @@ int SyntacticAnalyser::execute(){
         if (stream.atEnd() && !programStarted)
             return MessageLogger::getInstance().log(MessageLogger::E_NO_MAIN_ROUTINE);
 
+        bool canSkipLine = false;
         while(!stream.atEnd() && !programFinished){
             lineCounter++;
             QString line = stream.readLine();
@@ -103,6 +104,8 @@ int SyntacticAnalyser::execute(){
             }
 
             if (hasCommand){
+                canSkipLine = false;
+
                 Token oldToken;
                 switch (currentToken.type()) {
                     case Token::IDENTIFIER:
@@ -163,6 +166,7 @@ int SyntacticAnalyser::execute(){
                                             "", lineCounter, currentToken);
                         }
 
+                        canSkipLine = true;
                         break;
 
                     case Token::RESERVED:
@@ -206,6 +210,8 @@ int SyntacticAnalyser::execute(){
                             }
                             else return MessageLogger::getInstance().log(MessageLogger::E_UNEXPECTED_T,
                                             "", lineCounter, currentToken);
+
+                            canSkipLine = true;
                             break;
                         }
                         else if (currentToken.word() == "enquanto"){
@@ -240,6 +246,7 @@ int SyntacticAnalyser::execute(){
                                 }
                                 else return MessageLogger::getInstance().log(MessageLogger::E_EXPECTED_COND,
                                                 "Esperado identificador ou expressão.", lineCounter);
+                                canSkipLine = true;
                             }
                             else {
                                 if (tabulation != indentFactor){
@@ -267,6 +274,7 @@ int SyntacticAnalyser::execute(){
                                         return MessageLogger::getInstance().log(MessageLogger::E_UNEXPECTED_T,
                                                     "Não pode haver qualquer declaração após a construção da estrutura.",
                                                     lineCounter, current);
+                                    i++;
                                 }
 
                                 ExpressionParser::Validity eVal = expression->validity();
@@ -311,6 +319,7 @@ int SyntacticAnalyser::execute(){
                                     return MessageLogger::getInstance().log(MessageLogger::E_UNEXPECTED_T,
                                                 "Não pode haver qualquer declaração após a construção da estrutura.",
                                                 lineCounter, current);
+                                i++;
                             }
 
                             ExpressionParser::Validity eVal = expression->validity();
@@ -365,6 +374,7 @@ int SyntacticAnalyser::execute(){
                                         if (current.type() != Token::TABULATION)
                                             return MessageLogger::getInstance().log(MessageLogger::E_UNEXPECTED_T,
                                                         "Token inesperado após término de expressão.", lineCounter, current);
+                                        i++;
                                     }
 
                                     currentBlock = currentBlock->parent();
@@ -415,6 +425,7 @@ int SyntacticAnalyser::execute(){
                             if (!inExpression->isValid())
                                 return MessageLogger::getInstance().log(MessageLogger::E_UNDEFINED, "", lineCounter);
                             currentBlock->addProgramItem(inExpression);
+                            canSkipLine = true;
                         }
                         else if (currentToken.word() == "escreva"){
                             if (tabulation != indentFactor){
@@ -432,6 +443,7 @@ int SyntacticAnalyser::execute(){
                             if (!outExpression->isValid())
                                 return MessageLogger::getInstance().log(MessageLogger::E_UNDEFINED, "", lineCounter);
                             currentBlock->addProgramItem(outExpression);
+                            canSkipLine = true;
                         }
                         else return MessageLogger::getInstance().log(MessageLogger::E_UNEXPECTED_T,
                                         "", lineCounter, currentToken);
@@ -441,6 +453,10 @@ int SyntacticAnalyser::execute(){
                         return MessageLogger::getInstance().log(MessageLogger::E_UNEXPECTED_T,
                                     "", lineCounter, currentToken);
                 }
+            }
+            else if (canSkipLine){
+                currentBlock->addProgramItem(new BlankItem());
+                canSkipLine = false;
             }
         }
 

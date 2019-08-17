@@ -10,6 +10,7 @@
 
 #include "programitem.h"
 #include "ioparser/ioparser.h"
+#include "blankitem/blankitem.h"
 #include "lexicalanalyser/token.h"
 #include "blockparser/blockparser.h"
 #include "controlparser/controlparser.h"
