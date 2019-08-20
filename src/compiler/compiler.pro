@@ -10,7 +10,7 @@
 #    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #    GNU General Public License for more details.
 #
-#    You should have received a copy of the GNU General Public License
+#    You should have received a copy of the GNU Lesser General Public License
 #    along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
 
 TARGET = pifc
@@ -19,6 +19,21 @@ QT -= gui
 
 CONFIG += c++11 console
 CONFIG -= app_bundle
+
+win32 {
+    VERSION = 0.9.06
+
+    QMAKE_TARGET_COMPANY = PIF Project
+    QMAKE_TARGET_PRODUCT = PIFC
+    QMAKE_TARGET_DESCRIPTION = PIF Compiler
+    QMAKE_TARGET_COPYRIGHT = Copyright (c) 2019 - PIF Project
+
+    RC_ICONS = logo\pif_logo_x64.ico
+    RC_LANG = 0x0800
+}
+else {
+    VERSION = 0.9.06
+}
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
