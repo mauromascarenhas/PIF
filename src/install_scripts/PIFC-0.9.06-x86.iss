@@ -1,5 +1,5 @@
 [Setup]
-AppId={{BA22A35B-6830-4BB2-B516-EFABC57C60FA}
+AppId={{A153F592-6FE6-479C-A73C-57C85A269CFC}
 AppName=PIF Compiler
 AppVersion=0.9.06
 AppPublisher=PIF Project
@@ -13,9 +13,9 @@ DisableDirPage=yes
 DefaultGroupName=PIF
 AllowNoIcons=yes
 OutputDir=C:\Users\Mauro\Desktop\PIF_Compiler
-OutputBaseFilename=pif_compiler-0.9.06_x64
+OutputBaseFilename=pif_compiler-0.9.06_x86
 SetupIconFile=C:\Users\Mauro\Documents\GitHub\PIF\src\compiler\logo\pif_logo_x64.ico
-LicenseFile=C:\Users\Mauro\Documents\Completo\pif_compiler_x64\licence\LGPL_V3.txt
+LicenseFile=C:\Users\Mauro\Documents\Completo\pif_compiler\licence\LGPL_V3.txt
 UsePreviousAppDir=yes
 UsePreviousGroup=yes
 UsePreviousLanguage=yes
@@ -30,7 +30,6 @@ UninstallDisplayIcon={app}\pifc.exe
 Compression=lzma2/max
 SolidCompression=yes
 ChangesEnvironment=yes
-ArchitecturesInstallIn64BitMode = x64 ia64
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -48,8 +47,8 @@ Name: "sources"; Description: "{cm:SourceFiles}"; Types: full;
 Name: "envPath"; Description: "{cm:AddToPath}" 
 
 [Files]
-Source: "C:\Users\Mauro\Documents\Completo\Extra\vc_redist.x64.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall; AfterInstall: InstMSVSC
-Source: "C:\Users\Mauro\Documents\Completo\pif_compiler_x64\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: program
+Source: "C:\Users\Mauro\Documents\Completo\Extra\vc_redist.x86.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall; AfterInstall: InstMSVSC
+Source: "C:\Users\Mauro\Documents\Completo\pif_compiler\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: program
 Source: "C:\Users\Mauro\Documents\GitHub\PIF\*"; DestDir: "{app}\sources"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: sources
 
 [Code]
@@ -62,7 +61,7 @@ var
 begin
   if not FileExists(ExpandConstant('{sys}\MSVCP140.DLL'))
   then
-    if not Exec(ExpandConstant('{tmp}\vc_redist.x64.exe'), '', '', SW_SHOWNORMAL,
+    if not Exec(ExpandConstant('{tmp}\vc_redist.x86.exe'), '', '', SW_SHOWNORMAL,
       ewWaitUntilTerminated, ResultCode)
     then
       ExitProcess(1);
