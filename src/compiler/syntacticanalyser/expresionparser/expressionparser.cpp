@@ -129,6 +129,8 @@ ExpressionParser::Validity ExpressionParser::validity(){
                             || oldToken.type() == Token::PRIORITY_O
                             || oldToken.type() == Token::ARITHMETIC_OP){
                         if (declaredVars.contains(current.word())){
+                            invalidSemantic = declaredVars.value(current.word()) == ControlParser::LITERAL;
+                            if (invalidSemantic) i = tokens.length();
                             oldToken = current;
                             break;
                         }
