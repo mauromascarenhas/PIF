@@ -21,7 +21,7 @@ CONFIG += c++11 console
 CONFIG -= app_bundle
 
 win32 {
-    VERSION = 0.9.06
+    VERSION = 0.9.08
 
     QMAKE_TARGET_COMPANY = PIF Project
     QMAKE_TARGET_PRODUCT = PIFC
@@ -32,7 +32,7 @@ win32 {
     RC_LANG = 0x0800
 }
 else {
-    VERSION = 0.9.06
+    VERSION = 0.9.08
 }
 
 # The following define makes your compiler emit warnings if you use
