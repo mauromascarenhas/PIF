@@ -34,7 +34,16 @@ Para compilar o código, basta baixar o compilador ou compilá-lo através do c�
 
 # Baixando e instalando
 
-Em breve, haverá um instalador para as versões de 32 e 64 bits do Windows. Mas, por enquanto, apenas a compilação a partir do código fonte encontra-se disponível.
+## Windows
+
+Há distribuições binárias a partir da página de [*releases*](https://github.com/mauromascarenhas/PIF/releases).
+Vá para os detalhes da última versão e baixe o arquivo pif_compiler-X.X.XX_x{64|86}.exe, onde X.X.XX é a versão e x{64|86} é a arquitetura compilada (escolha a arquitetura compatível com a sua máquina). Depois, basta seguir os passos do instalador e executar o compilador através da linha de comando ou usando o [PIF IDE](https://github.com/mauromascarenhas/PIF-IDE).
+
+Alternativamente, você poderá compilar o projeto a partir do código fonte, conforme descrito na sessão **Compilando a partir do código fonte**.
+
+## Linux
+
+Para Linux, você deverá compilar o projeto a partir do código fonte, conforme descrito na sessão **Compilando a partir do código fonte**.
 
 # Compilando a partir do código fonte
 
