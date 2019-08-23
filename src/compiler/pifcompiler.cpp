@@ -23,7 +23,6 @@ PIFCompiler::PIFCompiler(QObject *parent) : QObject(parent),
     arguments = QCoreApplication::arguments();
     argCount = arguments.size();
 
-    output.setGenerateByteOrderMark(true);
     output.setCodec("UTF-8"); //ISO 8859-1
 }
 
