@@ -17,13 +17,14 @@
 
 #include "token.h"
 
-Token::Token(const QString &word, TokenType type, long position){
+Token::Token(const QString &word, TokenType type,
+             long position) : QObject(nullptr){
     this->cPos = position;
     this->cType = type;
     this->cWord = word;
 }
 
-Token::Token(const Token &other){
+Token::Token(const Token &other) : QObject(nullptr){
     this->cPos = other.position();
     this->cType = other.type();
     this->cWord = other.word();

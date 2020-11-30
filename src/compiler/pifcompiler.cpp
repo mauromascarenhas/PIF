@@ -62,6 +62,16 @@ void PIFCompiler::execute(){
                 break;
             }
         }
+        else if (arguments[i].toLower() == "-v" ||
+                 arguments[i].toLower() == "--version"){
+            if (arguments.size() != 2){
+                hasValidArgs = false;
+                break;
+            }
+            output << QString("PIFC - PIF Compiler").toUtf8() << endl;
+            output << QString(PROG_VERSION).toUtf8() << endl;
+            return;
+        }
         else {
             fileName = arguments[i];
             hasFileName = true;

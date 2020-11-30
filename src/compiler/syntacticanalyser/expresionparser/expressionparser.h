@@ -34,6 +34,7 @@ public:
         VALID_NO_ATTRIB,
         VALID_ATTRIB
     };
+    Q_ENUM(Validity)
 
     ExpressionParser(const QHash<QString, ControlParser::IdentifierType> &globalVars = QHash<QString, ControlParser::IdentifierType>());
     ~ExpressionParser();

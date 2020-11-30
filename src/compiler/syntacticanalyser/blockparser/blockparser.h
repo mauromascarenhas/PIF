@@ -38,6 +38,7 @@ public:
         MAIN,
         UNDEFINED
     };
+    Q_ENUM(BlockType)
 
     BlockParser(BlockParser *parent = nullptr,
                 BlockType blocktype = UNDEFINED,

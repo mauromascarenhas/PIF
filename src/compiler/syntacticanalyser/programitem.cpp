@@ -17,11 +17,7 @@
 
 #include "programitem.h"
 
-ProgramItem::ProgramItem()
+ProgramItem::ProgramItem() : QObject(nullptr)
 {
-
-}
-
-ProgramItem::~ProgramItem(){
 
 }

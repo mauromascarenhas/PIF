@@ -18,10 +18,12 @@
 #ifndef TOKEN_H
 #define TOKEN_H
 
+#include <QObject>
 #include <QString>
 
-class Token
+class Token : public QObject
 {
+    Q_OBJECT
 public:
     enum TokenType{
         ARITHMETIC_OP,
@@ -39,6 +41,7 @@ public:
         TABULATION,
         UNDEFINED
     };
+    Q_ENUM(TokenType)
 
     explicit Token(const QString &word = "", TokenType type = UNDEFINED,
                     long int position = -1);

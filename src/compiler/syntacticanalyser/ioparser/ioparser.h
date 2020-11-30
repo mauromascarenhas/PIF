@@ -34,6 +34,7 @@ public:
         INPUT,
         OUTPUT
     };
+    Q_ENUM(IOType)
 
     IOParser(IOType type = OUTPUT,
              const QHash<QString, ControlParser::IdentifierType> &globalVars = QHash<QString, ControlParser::IdentifierType>());

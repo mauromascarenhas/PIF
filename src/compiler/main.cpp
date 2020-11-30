@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
     QCoreApplication a(argc, argv);
 
     PIFCompiler *compiler = new PIFCompiler();
-    QTimer::singleShot(0, compiler, SLOT(execute()));
+    QTimer::singleShot(0, compiler, &PIFCompiler::execute);
 
     return a.exec();
 }

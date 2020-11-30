@@ -32,4 +32,5 @@
 *.app
 
 # Build dir
+/src/build-*
 /build-*

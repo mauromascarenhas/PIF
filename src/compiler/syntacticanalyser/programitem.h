@@ -18,20 +18,22 @@
 #ifndef PROGRAMITEM_H
 #define PROGRAMITEM_H
 
+#include <QObject>
 #include <QString>
 #include <QTextStream>
 
-class ProgramItem
+class ProgramItem : public QObject
 {
+    Q_OBJECT
 public:
     ProgramItem();
-    virtual ~ProgramItem();
 
     enum ConvLang{
         C,
         CPP,
         JAVA
     };
+    Q_ENUM(ConvLang)
 
     virtual void toOutFile(int indentFactor, QTextStream &stream, ConvLang conv = C) = 0;
 };

@@ -43,6 +43,7 @@ public:
         CONVERT_CPP,
         CONVERT_JAVA
     };
+    Q_ENUM(OperationType)
 
     explicit SyntacticAnalyser(const QString &fileName = "",
                                 const QString &outFileName = "",

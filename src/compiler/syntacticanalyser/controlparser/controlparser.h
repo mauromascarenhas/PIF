@@ -37,6 +37,7 @@ public:
         LITERAL,
         BOOLEAN
     };
+    Q_ENUM(IdentifierType)
 
     inline void addToken(const Token &token){ this->tokens.append(token); }
 

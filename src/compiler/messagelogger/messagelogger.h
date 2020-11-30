@@ -31,6 +31,7 @@ public:
         CRITICAL_Q,
         WARNING_L
     };
+    Q_ENUM(CriticalMode)
 
     enum LogType{
         E_CANT_OPEN_FILE,
@@ -54,12 +55,14 @@ public:
         W_UNDEFINED,
         SUCCESS
     };
+    Q_ENUM(LogType)
 
     enum MessageType{
         ERROR,
         INFO,
         WARNING
     };
+    Q_ENUM(MessageType)
 
     static MessageLogger& getInstance(CriticalMode mode = WARNING_L);
     static void clearInstance();
